@@ -1,0 +1,12 @@
+[package]
+name = "locale"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints.rust]
+non_snake_case = "allow"
+
+[dependencies]
+sys-locale = "0.3.2"
+unic-langid = { version = "0.9.6", features = ["macros"] }
