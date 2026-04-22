@@ -1,0 +1,37 @@
+---
+source: crates/lexer/src/tests.rs
+description: "add: fn(a: Int, b: Int) -> Int = a + b;"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Ident(3),
+    Colon(1),
+    Whitespace(1),
+    Ident(2),
+    OpenParen(1),
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    Comma(1),
+    Whitespace(1),
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    CloseParen(1),
+    Whitespace(1),
+    Minus(1),
+    Gt(1),
+    Whitespace(1),
+    Ident(3),
+    Whitespace(1),
+    Eq(1),
+    Whitespace(1),
+    Ident(1),
+    Whitespace(1),
+    Plus(1),
+    Whitespace(1),
+    Ident(1),
+    Semi(1),
+]
