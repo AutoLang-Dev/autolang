@@ -18,8 +18,8 @@ pub fn tr_of(locale: String) -> &'static dyn Language {
 
   if lang == lang!("en") {
     &en_US::en_US
-  } else if lang == lang!("jp") {
-    &jp::jp
+  } else if lang == lang!("ja") {
+    &ja::ja
   } else if lang == lang!("zh") {
     if script == Some(script!("Hant")) {
       &zh_Hant::zh_Hant
