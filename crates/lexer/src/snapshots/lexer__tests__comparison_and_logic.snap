@@ -1,0 +1,28 @@
+---
+source: crates/lexer/src/tests.rs
+description: a == b && c != d || e
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Ident(1),
+    Whitespace(1),
+    Eq(1),
+    Eq(1),
+    Whitespace(1),
+    Ident(1),
+    Whitespace(1),
+    Amp(1),
+    Amp(1),
+    Whitespace(1),
+    Ident(1),
+    Whitespace(1),
+    Bang(1),
+    Eq(1),
+    Whitespace(1),
+    Ident(1),
+    Whitespace(1),
+    Pipe(1),
+    Pipe(1),
+    Whitespace(1),
+    Ident(1),
+]

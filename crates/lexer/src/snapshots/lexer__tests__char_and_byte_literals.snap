@@ -1,0 +1,12 @@
+---
+source: crates/lexer/src/tests.rs
+description: "'a' b'x' b\"hi\""
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Literal(3),
+    Whitespace(1),
+    Literal(4),
+    Whitespace(1),
+    Literal(5),
+]

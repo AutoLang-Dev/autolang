@@ -1,0 +1,11 @@
+[package]
+name = "lexer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+unicode-ident = "1.0.24"
+
+[dev-dependencies]
+insta = "1.47.2"

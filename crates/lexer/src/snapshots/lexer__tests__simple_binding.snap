@@ -1,0 +1,16 @@
+---
+source: crates/lexer/src/tests.rs
+description: "x: Int = 42;"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    Whitespace(1),
+    Eq(1),
+    Whitespace(1),
+    Literal(2),
+    Semi(1),
+]

@@ -1,0 +1,29 @@
+---
+source: crates/lexer/src/tests.rs
+description: "Point: type = { x: Int, y: Int };"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Ident(5),
+    Colon(1),
+    Whitespace(1),
+    Ident(4),
+    Whitespace(1),
+    Eq(1),
+    Whitespace(1),
+    OpenBrace(1),
+    Whitespace(1),
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    Comma(1),
+    Whitespace(1),
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    Whitespace(1),
+    CloseBrace(1),
+    Semi(1),
+]

@@ -1,0 +1,18 @@
+---
+source: crates/lexer/src/tests.rs
+description: "// this is a comment\n    x: Int = 1;"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Comment(20),
+    Whitespace(5),
+    Ident(1),
+    Colon(1),
+    Whitespace(1),
+    Ident(3),
+    Whitespace(1),
+    Eq(1),
+    Whitespace(1),
+    Literal(1),
+    Semi(1),
+]

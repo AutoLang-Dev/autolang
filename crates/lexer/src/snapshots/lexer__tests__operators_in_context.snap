@@ -1,0 +1,23 @@
+---
+source: crates/lexer/src/tests.rs
+description: x += 1; y >>= 2;
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Ident(1),
+    Whitespace(1),
+    Plus(1),
+    Eq(1),
+    Whitespace(1),
+    Literal(1),
+    Semi(1),
+    Whitespace(1),
+    Ident(1),
+    Whitespace(1),
+    Gt(1),
+    Gt(1),
+    Eq(1),
+    Whitespace(1),
+    Literal(1),
+    Semi(1),
+]

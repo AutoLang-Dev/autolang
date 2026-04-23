@@ -1,0 +1,18 @@
+---
+source: crates/lexer/src/tests.rs
+description: "42 0b1010 0o77 0xFF 0rz233 114'514"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Literal(2),
+    Whitespace(1),
+    Literal(6),
+    Whitespace(1),
+    Literal(4),
+    Whitespace(1),
+    Literal(4),
+    Whitespace(1),
+    Literal(6),
+    Whitespace(1),
+    Literal(7),
+]

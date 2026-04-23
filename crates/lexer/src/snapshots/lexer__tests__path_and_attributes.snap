@@ -1,0 +1,20 @@
+---
+source: crates/lexer/src/tests.rs
+description: "::std::io #[attr] pub"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Colon(1),
+    Colon(1),
+    Ident(3),
+    Colon(1),
+    Colon(1),
+    Ident(2),
+    Whitespace(1),
+    Hash(1),
+    OpenBracket(1),
+    Ident(4),
+    CloseBracket(1),
+    Whitespace(1),
+    Ident(3),
+]
