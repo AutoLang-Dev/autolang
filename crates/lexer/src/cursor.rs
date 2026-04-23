@@ -233,7 +233,7 @@ impl<'a> Cursor<'a> {
     while let Some(c) = self.bump() {
       match c {
         '"' | '\n' => break,
-        '\\' if self.first() == '\\' || self.first() == '"' => {
+        '\\' if matches!(self.first(), '\\' | '"') => {
           self.bump();
         }
         _ => (),
