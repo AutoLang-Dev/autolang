@@ -4,7 +4,6 @@ description: "\"line1\n\"line2"
 expression: "lex(input).collect :: < Vec < _ >> ()"
 ---
 [
-    Literal(6),
-    Whitespace(1),
+    Literal(7),
     Literal(6),
 ]

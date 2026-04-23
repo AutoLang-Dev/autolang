@@ -129,12 +129,12 @@ impl<'a> Cursor<'a> {
       'b' => match self.first() {
         '\'' => {
           self.bump();
-          self.quoted('\'');
+          self.single_quoted();
           Literal
         }
         '"' => {
           self.bump();
-          self.quoted('"');
+          self.double_quoted();
           Literal
         }
         _ => self.ident(),
@@ -184,7 +184,7 @@ impl<'a> Cursor<'a> {
       },
 
       '"' => {
-        self.quoted('\"');
+        self.double_quoted();
         Literal
       }
 
@@ -194,20 +194,25 @@ impl<'a> Cursor<'a> {
     self.sync(kind)
   }
 
-  fn quoted(&mut self, quote: char) {
-    if quote == '\'' && self.first() == '\'' {
-      self.eat_line();
-      return;
-    }
-
-    if self.second() == quote && self.first() != '\\' {
+  fn single_quoted(&mut self) {
+    // check if it's one-symbol
+    if self.second() == '\'' && self.first() != '\\' {
       self.bump();
       self.bump();
       return;
     }
 
+    // more than one-symbol
     loop {
       match self.first() {
+        '\'' => {
+          self.bump();
+          return;
+        }
+
+        // probably beginning of the comment
+        '/' if self.second() == '/' => break,
+
         '\n' => break,
 
         EOF_CHAR if self.is_eof() => break,
@@ -217,12 +222,21 @@ impl<'a> Cursor<'a> {
           self.bump();
         }
 
-        c => {
+        _ => {
           self.bump();
-          if c == quote {
-            break;
-          }
         }
+      }
+    }
+  }
+
+  fn double_quoted(&mut self) {
+    while let Some(c) = self.bump() {
+      match c {
+        '\"' | '\n' => break,
+        '\\' if self.first() == '\\' || self.first() == '"' => {
+          self.bump();
+        }
+        _ => (),
       }
     }
   }
@@ -236,7 +250,7 @@ impl<'a> Cursor<'a> {
     };
 
     if !can_be_a_label {
-      self.quoted('\'');
+      self.single_quoted();
       return Literal;
     }
 
