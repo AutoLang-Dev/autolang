@@ -1,0 +1,16 @@
+---
+source: crates/lexer/src/tests.rs
+assertion_line: 73
+description: "0r2'01 0r8'765 0ra123 0rb456"
+expression: "lex(input).collect :: < Vec < _ >> ()"
+---
+[
+    Literal(6),
+    Whitespace(1),
+    Literal(7),
+    Whitespace(1),
+    Literal(2),
+    Ident(4),
+    Whitespace(1),
+    Literal(6),
+]

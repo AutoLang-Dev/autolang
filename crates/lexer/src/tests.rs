@@ -69,6 +69,11 @@ fn integer_literals() {
 }
 
 #[test]
+fn any_radix_integer() {
+  debug!(r#"0r2'01 0r8'765 0ra123 0rb456"#);
+}
+
+#[test]
 fn labels() {
   debug!(r#"'loop 'end"#);
 }
