@@ -42,7 +42,7 @@ pub fn strip_shebang(input: &str) -> usize {
     return 0;
   }
 
-  input.lines().next().unwrap_or_default().len()
+  input.lines().next().unwrap().len()
 }
 
 pub struct Cursor<'a> {
