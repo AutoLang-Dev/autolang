@@ -285,9 +285,6 @@ impl<'a> Cursor<'a> {
         'r' => match self.second() {
           radix_char @ '0'..='z' => {
             self.bump();
-            if radix_char == 'A' {
-              self.bump();
-            }
             radix_char.to_digit(36).unwrap()
           }
           _ => return,
@@ -295,9 +292,6 @@ impl<'a> Cursor<'a> {
         '0'..='9' | '\'' => 10,
         _ => return,
       };
-    }
-
-    if radix != 10 {
       self.bump();
     }
 
