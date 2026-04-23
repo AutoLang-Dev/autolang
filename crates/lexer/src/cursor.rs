@@ -283,7 +283,7 @@ impl<'a> Cursor<'a> {
         'o' => 8,
         'x' => 16,
         'r' => match self.second() {
-          radix_char @ '0'..='z' => {
+          radix_char @ ('0'..='9' | 'a'..='z') => {
             self.bump();
             radix_char.to_digit(36).unwrap()
           }
