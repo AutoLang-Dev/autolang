@@ -90,7 +90,7 @@ impl<'a> Cursor<'a> {
     self.chars.next()
   }
 
-  pub fn eat_while(&mut self, mut pred: impl FnMut(char) -> bool) {
+  pub fn eat_while(&mut self, pred: impl Fn(char) -> bool) {
     while pred(self.first()) && !self.is_eof() {
       self.bump();
     }
