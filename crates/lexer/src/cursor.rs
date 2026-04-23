@@ -232,7 +232,7 @@ impl<'a> Cursor<'a> {
   fn double_quoted(&mut self) {
     while let Some(c) = self.bump() {
       match c {
-        '\"' | '\n' => break,
+        '"' | '\n' => break,
         '\\' if self.first() == '\\' || self.first() == '"' => {
           self.bump();
         }
