@@ -74,6 +74,11 @@ fn any_radix_integer() {
 }
 
 #[test]
+fn any_radix_0_to_z_but_invalid() {
+  debug!(r#"0r=0 0r_1"#);
+}
+
+#[test]
 fn labels() {
   debug!(r#"'loop 'end"#);
 }
