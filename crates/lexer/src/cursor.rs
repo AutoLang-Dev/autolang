@@ -295,6 +295,7 @@ impl<'a> Cursor<'a> {
       self.bump();
     }
 
+    let radix = radix.max(10);
     loop {
       match self.first() {
         '\'' => {

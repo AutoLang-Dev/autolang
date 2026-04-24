@@ -79,6 +79,11 @@ fn any_radix_0_to_z_but_invalid() {
 }
 
 #[test]
+fn invalid_bin_oct() {
+  debug!(r#"0b0123aa 0o6789bb"#);
+}
+
+#[test]
 fn labels() {
   debug!(r#"'loop 'end"#);
 }
