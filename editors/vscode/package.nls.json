@@ -1,0 +1,10 @@
+{
+  "extension.description": "AutoLang language support for Visual Studio Code",
+  "command.category": "AutoLang",
+  "command.startServer.title": "Start AutoLang LSP Server",
+  "command.stopServer.title": "Stop AutoLang LSP Server",
+  "command.restartServer.title": "Restart AutoLang LSP Server",
+  "configuration.title": "AutoLang",
+  "configuration.cli.path.description": "Path to the AutoLang CLI binary. Defaults to the \"autolang\" command on PATH, and the extension starts the language server with the \"lsp\" subcommand.",
+  "configuration.dev.runServerFromSource.description": "Only applies when running or debugging this extension from the AutoLang repository source. Starts the language server from the repository source instead of using autolang.cli.path."
+}

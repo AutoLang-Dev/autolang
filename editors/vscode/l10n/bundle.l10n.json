@@ -1,0 +1,9 @@
+{
+  "AutoLang CLI path is not configured. Please set \"autolang.cli.path\" in settings.": "AutoLang CLI path is not configured. Please set \"autolang.cli.path\" in settings.",
+  "AutoLang LSP server is already running.": "AutoLang LSP server is already running.",
+  "AutoLang LSP server is not running.": "AutoLang LSP server is not running.",
+  "AutoLang LSP server started.": "AutoLang LSP server started.",
+  "AutoLang LSP server stopped.": "AutoLang LSP server stopped.",
+  "Failed to start AutoLang LSP server: {0}": "Failed to start AutoLang LSP server: {0}",
+  "Failed to stop AutoLang LSP server: {0}": "Failed to stop AutoLang LSP server: {0}"
+}
