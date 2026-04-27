@@ -1,0 +1,16 @@
+---
+source: crates/cli/tests/cli_output.rs
+description: AUTOLANG_LOCALE=zh-Hans autolang nope
+---
+$ AUTOLANG_LOCALE=zh-Hans autolang nope
+
+status: 2
+
+stdout:
+
+stderr:
+错误: 无法识别的子命令 'nope'
+
+用法： autolang [命令]
+
+更多信息请尝试 '--help'。

@@ -4,5 +4,15 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[[bin]]
+name = "autolang"
+path = "src/main.rs"
+
 [dependencies]
+anyhow = "1.0.102"
+clap = { version = "4.6.1", features = ["string"] }
 locale = { path = "../locale" }
+lsp = { version = "0.0.1", path = "../lsp" }
+
+[dev-dependencies]
+insta = "1.47.2"

@@ -1,6 +1,10 @@
-use locale::tr;
+mod cli;
 
-// WIP
-fn main() {
-  println!("{}", tr().hello_world());
+use cli::CommandKind;
+
+fn main() -> anyhow::Result<()> {
+  match cli::parse()? {
+    Some(CommandKind::Lsp) => lsp::run(),
+    None => Ok(()),
+  }
 }
