@@ -1,0 +1,91 @@
+{
+  "name": "autolang-vscode",
+  "displayName": "AutoLang",
+  "description": "%extension.description%",
+  "version": "0.0.1",
+  "publisher": "AutoLang-Dev",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/AutoLang-Dev/autolang",
+  "l10n": "./l10n",
+  "engines": {
+    "vscode": "^1.116.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "autolang",
+        "aliases": [
+          "AutoLang",
+          "at",
+          "al"
+        ],
+        "extensions": [
+          ".at"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "autolang.startServer",
+        "title": "%command.startServer.title%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "autolang.stopServer",
+        "title": "%command.stopServer.title%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "autolang.restartServer",
+        "title": "%command.restartServer.title%",
+        "category": "%command.category%"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "%configuration.title%",
+      "properties": {
+        "autolang.cli.path": {
+          "type": "string",
+          "default": "autolang",
+          "description": "%configuration.cli.path.description%"
+        },
+        "autolang.dev.runServerFromSource": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.dev.runServerFromSource.description%"
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[autolang]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "check": "tsc -p ./ --noEmit",
+    "bundle": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=out/extension.js --sourcemap",
+    "compile": "npm run check && npm run bundle",
+    "prepackage": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true })\"",
+    "package": "vsce package --out dist/autolang-vscode-${npm_package_version}.vsix",
+    "watch": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=out/extension.js --sourcemap --watch"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/vscode": "^1.116.0",
+    "@vscode/vsce": "^3.6.0",
+    "esbuild": "^0.27.0",
+    "typescript": "^6.0.3"
+  }
+}
