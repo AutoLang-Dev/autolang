@@ -1,0 +1,12 @@
+---
+source: crates/cli/tests/cli_output.rs
+description: AUTOLANG_LOCALE=zh-Hans autolang -V
+---
+$ AUTOLANG_LOCALE=zh-Hans autolang -V
+
+status: 0
+
+stdout:
+autolang 0.0.1
+
+stderr:

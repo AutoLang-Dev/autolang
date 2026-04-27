@@ -1,0 +1,22 @@
+---
+source: crates/cli/tests/cli_output.rs
+description: AUTOLANG_LOCALE=zh-Hans autolang
+---
+$ AUTOLANG_LOCALE=zh-Hans autolang
+
+status: 0
+
+stdout:
+AutoLang 命令行工具。
+
+用法： autolang [命令]
+
+命令:
+  lsp  通过标准输入输出启动 AutoLang 语言服务器。
+
+选项:
+  -h, --help     打印帮助信息。
+  -V, --version  打印版本信息。
+
+
+stderr:

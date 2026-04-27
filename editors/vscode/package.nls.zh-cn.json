@@ -1,0 +1,10 @@
+{
+  "extension.description": "AutoLang 的 Visual Studio Code 语言支持",
+  "command.category": "AutoLang",
+  "command.startServer.title": "启动 AutoLang LSP 服务器",
+  "command.stopServer.title": "停止 AutoLang LSP 服务器",
+  "command.restartServer.title": "重启 AutoLang LSP 服务器",
+  "configuration.title": "AutoLang",
+  "configuration.cli.path.description": "AutoLang CLI 可执行文件路径。默认使用 PATH 中的 \"autolang\" 命令，扩展会通过 \"lsp\" 子命令启动语言服务器。",
+  "configuration.dev.runServerFromSource.description": "仅在从 AutoLang 仓库源码运行或调试此扩展时生效。从仓库源码启动语言服务器，而不是使用 autolang.cli.path。"
+}

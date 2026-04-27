@@ -1,0 +1,16 @@
+---
+source: crates/cli/tests/cli_output.rs
+description: AUTOLANG_LOCALE=zh-Hans autolang lsp --bad
+---
+$ AUTOLANG_LOCALE=zh-Hans autolang lsp --bad
+
+status: 2
+
+stdout:
+
+stderr:
+错误: 发现意外参数 '--bad'
+
+用法： autolang lsp
+
+更多信息请尝试 '--help'。
