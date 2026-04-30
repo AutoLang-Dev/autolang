@@ -1,0 +1,31 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "foo: mod = { bar: mod; };"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(ModuleItem),
+        Ident(1),
+        Colon(1),
+        KwMod(1),
+        Eq(1),
+        OpenBrace(1),
+        Enter(ModuleInner),
+        Enter(ModuleItem),
+        Ident(1),
+        Colon(1),
+        KwMod(1),
+        Semi(1),
+        Exit,
+        Exit,
+        CloseBrace(1),
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests/lexed.rs
+description: fn mod true false ident _
+expression: raw_tokens(&lexed)
+---
+[
+    KwFn("fn")@0,
+    Whitespace(" ")@2,
+    KwMod("mod")@3,
+    Whitespace(" ")@6,
+    KwTrue("true")@7,
+    Whitespace(" ")@11,
+    KwFalse("false")@12,
+    Whitespace(" ")@17,
+    Ident("ident")@18,
+    Whitespace(" ")@23,
+    Underscore("_")@24,
+]

@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests/lexed.rs
+description: "` abc' def\""
+expression: raw_tokens(&lexed)
+---
+[
+    Unknown("`")@0,
+    Whitespace(" ")@1,
+    UnknownPrefix("abc")@2,
+    Char("' def\"")@5,
+]

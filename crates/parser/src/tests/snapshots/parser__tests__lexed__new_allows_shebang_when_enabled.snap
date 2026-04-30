@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests/lexed.rs
+description: "#!/usr/bin/env autolang\nfoo"
+expression: raw_tokens(&lexed)
+---
+[
+    Shebang("#!/usr/bin/env autolang")@0,
+    Whitespace("\n")@23,
+    Ident("foo")@24,
+]

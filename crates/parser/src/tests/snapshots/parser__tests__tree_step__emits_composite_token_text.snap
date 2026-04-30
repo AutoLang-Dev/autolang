@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: a->b
+expression: steps
+---
+[
+    Ident("a"),
+    ThinArrow("->"),
+    Ident("b"),
+]

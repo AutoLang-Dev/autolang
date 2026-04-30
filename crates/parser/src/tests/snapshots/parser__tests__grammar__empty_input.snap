@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: ""
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

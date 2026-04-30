@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests/lexed.rs
+description: "42 'a' b'x' \"s\" ''raw"
+expression: raw_tokens(&lexed)
+---
+[
+    Int("42")@0,
+    Whitespace(" ")@2,
+    Char("'a'")@3,
+    Whitespace(" ")@6,
+    Byte("b'x'")@7,
+    Whitespace(" ")@11,
+    String("\"s\"")@12,
+    Whitespace(" ")@15,
+    RawString("''raw")@16,
+]

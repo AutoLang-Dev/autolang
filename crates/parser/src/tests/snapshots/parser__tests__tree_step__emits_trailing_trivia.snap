@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: foo // comment
+expression: steps
+---
+[
+    Ident("foo"),
+    Whitespace(" "),
+    Comment("// comment"),
+]

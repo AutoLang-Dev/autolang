@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests/input.rs
+description: a->b
+expression: input_tokens(&parser_input)
+---
+[
+    Ident joint,
+    Minus joint,
+    Gt joint,
+    Ident,
+]

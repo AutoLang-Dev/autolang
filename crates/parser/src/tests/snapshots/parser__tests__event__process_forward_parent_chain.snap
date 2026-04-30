@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests/event.rs
+description: forward parent chain
+expression: output.steps()
+---
+[
+    Enter(CallExpr),
+    Enter(FieldExpr),
+    Enter(PathExpr),
+    Ident(1),
+    Exit,
+    Dot(1),
+    Ident(1),
+    Exit,
+    OpenParen(1),
+    CloseParen(1),
+    Exit,
+]

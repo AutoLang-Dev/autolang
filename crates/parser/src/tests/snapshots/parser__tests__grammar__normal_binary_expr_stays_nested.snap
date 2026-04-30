@@ -1,0 +1,52 @@
+---
+source: crates/parser/src/tests/grammar.rs
+assertion_line: 77
+description: "x: = a + b + c;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(BindingItem),
+        Enter(Binding),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Eq(1),
+        Enter(BinaryExpr),
+        Enter(BinaryExpr),
+        Enter(PathExpr),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Plus(1),
+        Enter(PathExpr),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Exit,
+        Plus(1),
+        Enter(PathExpr),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

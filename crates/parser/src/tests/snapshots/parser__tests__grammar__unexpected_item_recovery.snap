@@ -1,0 +1,30 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: foo fn;
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Error(0),
+        Ident(1),
+        Error(1),
+        KwFn(1),
+        Enter(EmptyItem),
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [
+        Expected {
+            expected: Ident,
+            actual: Ident,
+        },
+        Expected {
+            expected: Ident,
+            actual: KwFn,
+        },
+    ],
+}
