@@ -1,0 +1,30 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "UserId: nominal = Int;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(TypeItem),
+        Ident(1),
+        Colon(1),
+        Enter(TypeKind),
+        KwNominal(1),
+        Exit,
+        Eq(1),
+        Enter(PathType),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

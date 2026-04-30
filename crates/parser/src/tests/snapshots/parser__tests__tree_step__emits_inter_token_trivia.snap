@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: "foo : mod"
+expression: steps
+---
+[
+    Ident("foo"),
+    Whitespace(" "),
+    Colon(":"),
+    Whitespace(" "),
+    KwMod("mod"),
+]

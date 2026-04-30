@@ -1,0 +1,38 @@
+---
+source: crates/parser/src/tests/grammar.rs
+assertion_line: 67
+description: "test: = 1 && 2 && 3;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(BindingItem),
+        Enter(Binding),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Eq(1),
+        Enter(ChainExpr),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        AmpAmp(2),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        AmpAmp(2),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

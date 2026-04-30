@@ -1,0 +1,49 @@
+---
+source: crates/parser/src/tests/grammar.rs
+assertion_line: 108
+description: "x: = { key: val 111 };"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(BindingItem),
+        Enter(Binding),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Eq(1),
+        Enter(StructExpr),
+        OpenBrace(1),
+        Enter(FieldValue),
+        Enter(FieldName),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Enter(PathExpr),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Exit,
+        Error(0),
+        Int(1),
+        CloseBrace(1),
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [
+        Expected {
+            expected: CloseBrace,
+            actual: Int,
+        },
+    ],
+}

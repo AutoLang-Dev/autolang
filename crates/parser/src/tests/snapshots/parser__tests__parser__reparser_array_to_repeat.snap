@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests/parser.rs
+description: "[1; 2]"
+expression: output.steps()
+---
+[
+    Enter(RepeatExpr),
+    OpenBrack(1),
+    Enter(LiteralExpr),
+    Int(1),
+    Exit,
+    Semi(1),
+    Enter(LiteralExpr),
+    Int(1),
+    Exit,
+    CloseBrack(1),
+    Exit,
+]

@@ -1,0 +1,8 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: foo
+expression: steps
+---
+[
+    Error(Expected { expected: Colon, actual: Ident }),
+]

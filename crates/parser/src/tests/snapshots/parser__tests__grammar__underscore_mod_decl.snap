@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "_: mod;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(ModuleItem),
+        Underscore(1),
+        Colon(1),
+        KwMod(1),
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

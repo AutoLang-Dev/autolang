@@ -1,0 +1,44 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "using foo::*; using bar;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(UsingItem),
+        KwUsing(1),
+        Enter(UsingTree),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        ColonColon(2),
+        Exit,
+        Error(0),
+        Star(1),
+        Exit,
+        Semi(1),
+        Exit,
+        Enter(UsingItem),
+        KwUsing(1),
+        Enter(UsingTree),
+        Enter(Path),
+        Enter(PathSegment),
+        Ident(1),
+        Exit,
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [
+        Expected {
+            expected: Underscore,
+            actual: Star,
+        },
+    ],
+}

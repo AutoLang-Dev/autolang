@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: "#!/usr/bin/env autolang\nfoo"
+expression: steps
+---
+[
+    Shebang("#!/usr/bin/env autolang"),
+    Whitespace("\n"),
+    Ident("foo"),
+]

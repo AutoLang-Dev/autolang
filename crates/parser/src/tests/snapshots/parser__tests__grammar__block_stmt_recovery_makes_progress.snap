@@ -1,0 +1,37 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "x: = { , };"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(BindingItem),
+        Enter(Binding),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Eq(1),
+        Enter(BlockExpr),
+        OpenBrace(1),
+        Enter(ErrorExpr),
+        Error(0),
+        Exit,
+        Comma(1),
+        CloseBrace(1),
+        Exit,
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [
+        Expected {
+            expected: Ident,
+            actual: Comma,
+        },
+    ],
+}
