@@ -1,0 +1,30 @@
+---
+source: crates/syntax/src/tests.rs
+assertion_line: 86
+description: "test: = 1 && 2 && 3;"
+expression: "debug::syntax_tree(&parse(input))"
+---
+SourceFile
+  ModuleInner
+    BindingItem
+      Binding
+        IdentPat
+          Ident "test"
+        Colon ":"
+        Whitespace " "
+        Eq "="
+        Whitespace " "
+        ChainExpr
+          LiteralExpr
+            Int "1"
+          Whitespace " "
+          AmpAmp "&&"
+          Whitespace " "
+          LiteralExpr
+            Int "2"
+          Whitespace " "
+          AmpAmp "&&"
+          Whitespace " "
+          LiteralExpr
+            Int "3"
+      Semi ";"

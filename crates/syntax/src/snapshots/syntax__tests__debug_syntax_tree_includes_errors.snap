@@ -1,0 +1,17 @@
+---
+source: crates/syntax/src/tests.rs
+assertion_line: 96
+description: foo fn;
+expression: "debug::syntax_tree(&parse)"
+---
+SourceFile
+  ModuleInner
+    Ident "foo"
+    Whitespace " "
+    KwFn "fn"
+    EmptyItem
+      Semi ";"
+
+Errors:
+  SyntaxError { error: Expected { expected: Ident, actual: Ident }, offset: 0 }
+  SyntaxError { error: Expected { expected: Ident, actual: KwFn }, offset: 4 }

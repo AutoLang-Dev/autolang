@@ -1,0 +1,15 @@
+---
+source: crates/syntax/src/tests.rs
+description: "foo: mod;"
+expression: dump(input)
+---
+[
+    "SourceFile",
+    "  ModuleInner",
+    "    ModuleItem",
+    "      Ident \"foo\"",
+    "      Colon \":\"",
+    "      Whitespace \" \"",
+    "      KwMod \"mod\"",
+    "      Semi \";\"",
+]

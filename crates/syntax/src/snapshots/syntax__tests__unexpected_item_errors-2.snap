@@ -1,0 +1,22 @@
+---
+source: crates/syntax/src/tests.rs
+assertion_line: 72
+description: errors
+expression: parse.errors()
+---
+[
+    SyntaxError {
+        error: Expected {
+            expected: Ident,
+            actual: Ident,
+        },
+        offset: 0,
+    },
+    SyntaxError {
+        error: Expected {
+            expected: Ident,
+            actual: KwFn,
+        },
+        offset: 4,
+    },
+]

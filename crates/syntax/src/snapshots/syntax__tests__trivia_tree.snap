@@ -1,0 +1,20 @@
+---
+source: crates/syntax/src/tests.rs
+description: "#!/usr/bin/env autolang\nfoo : mod; // keep me"
+expression: dump(input)
+---
+[
+    "SourceFile",
+    "  Shebang \"#!/usr/bin/env autolang\"",
+    "  Whitespace \"\\n\"",
+    "  ModuleInner",
+    "    ModuleItem",
+    "      Ident \"foo\"",
+    "      Whitespace \" \"",
+    "      Colon \":\"",
+    "      Whitespace \" \"",
+    "      KwMod \"mod\"",
+    "      Semi \";\"",
+    "  Whitespace \" \"",
+    "  Comment \"// keep me\"",
+]
