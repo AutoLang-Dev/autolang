@@ -1,5 +1,7 @@
 pub struct ja;
 
+use parser::SyntaxKind;
+
 impl crate::Language for ja {
   fn hello_world(&self) -> String {
     "初めまして、AutoLang！".into()
@@ -59,5 +61,40 @@ impl crate::Language for ja {
 
   fn help_command_value_name(&self) -> String {
     "COMMAND".into()
+  }
+
+  fn lsp_document_not_found(&self) -> String {
+    "ドキュメントが見つかりません".into()
+  }
+
+  fn lsp_method_not_found(&self) -> String {
+    "メソッドが見つかりません".into()
+  }
+
+  fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
+    format!(
+      "{} が必要ですが、{} が見つかりました",
+      self.syntax_kind_name(expected),
+      self.syntax_kind_name(actual)
+    )
+  }
+
+  fn syntax_kind_name(&self, kind: SyntaxKind) -> String {
+    match kind.fixed_text() {
+      Some(text) if kind.is_keyword() => format!("キーワード `{text}`"),
+      Some(text) => text.into(),
+      None => match kind {
+        SyntaxKind::Ident => "識別子".into(),
+        SyntaxKind::Label => "ラベル".into(),
+        SyntaxKind::Int => "整数リテラル".into(),
+        SyntaxKind::Char => "文字リテラル".into(),
+        SyntaxKind::Byte => "バイトリテラル".into(),
+        SyntaxKind::String | SyntaxKind::RawString => "文字列リテラル".into(),
+        SyntaxKind::Eof => "ファイルの終端".into(),
+        SyntaxKind::Unknown => "不明な token".into(),
+        SyntaxKind::UnknownPrefix => "不明なプレフィックス".into(),
+        _ => format!("{kind:?}"),
+      },
+    }
   }
 }

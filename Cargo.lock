@@ -328,6 +328,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
 name = "locale"
 version = "0.0.1"
 dependencies = [
+ "parser",
  "sys-locale",
  "unic-langid",
 ]
@@ -343,11 +344,12 @@ name = "lsp"
 version = "0.0.1"
 dependencies = [
  "anyhow",
- "lexer",
  "line-index",
+ "locale",
  "lsp-server",
  "lsp-types",
  "serde_json",
+ "syntax",
 ]
 
 [[package]]

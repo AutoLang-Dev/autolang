@@ -1,5 +1,7 @@
 pub struct zh_Hant;
 
+use parser::SyntaxKind;
+
 impl crate::Language for zh_Hant {
   fn hello_world(&self) -> String {
     "你好，AutoLang！".into()
@@ -59,5 +61,40 @@ impl crate::Language for zh_Hant {
 
   fn help_command_value_name(&self) -> String {
     "命令".into()
+  }
+
+  fn lsp_document_not_found(&self) -> String {
+    "找不到文件".into()
+  }
+
+  fn lsp_method_not_found(&self) -> String {
+    "找不到方法".into()
+  }
+
+  fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
+    format!(
+      "期望 {}，但遇到 {}",
+      self.syntax_kind_name(expected),
+      self.syntax_kind_name(actual)
+    )
+  }
+
+  fn syntax_kind_name(&self, kind: SyntaxKind) -> String {
+    match kind.fixed_text() {
+      Some(text) if kind.is_keyword() => format!("關鍵字 `{text}`"),
+      Some(text) => text.into(),
+      None => match kind {
+        SyntaxKind::Ident => "識別符".into(),
+        SyntaxKind::Label => "標籤".into(),
+        SyntaxKind::Int => "整數字面值".into(),
+        SyntaxKind::Char => "字元字面值".into(),
+        SyntaxKind::Byte => "位元組字面值".into(),
+        SyntaxKind::String | SyntaxKind::RawString => "字串字面值".into(),
+        SyntaxKind::Eof => "檔案結尾".into(),
+        SyntaxKind::Unknown => "未知 token".into(),
+        SyntaxKind::UnknownPrefix => "未知前綴".into(),
+        _ => format!("{kind:?}"),
+      },
+    }
   }
 }

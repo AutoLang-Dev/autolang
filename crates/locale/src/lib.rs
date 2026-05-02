@@ -4,6 +4,6 @@
 mod lang;
 mod tr;
 
-pub use lang::{Language, tr, tr_of};
+pub use lang::{Language, set_tr, tr, tr_of};
 pub use sys_locale::get_locale;
 pub use tr::{en_US::en_US, ja::ja, zh_Hans::zh_Hans, zh_Hant::zh_Hant};

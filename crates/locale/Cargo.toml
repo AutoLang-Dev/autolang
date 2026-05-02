@@ -8,5 +8,6 @@ license.workspace = true
 non_snake_case = "allow"
 
 [dependencies]
+parser = { path = "../parser" }
 sys-locale = "0.3.2"
 unic-langid = { version = "0.9.6", features = ["macros"] }
