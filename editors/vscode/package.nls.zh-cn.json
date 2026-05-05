@@ -4,7 +4,10 @@
   "command.startServer.title": "启动 AutoLang LSP 服务器",
   "command.stopServer.title": "停止 AutoLang LSP 服务器",
   "command.restartServer.title": "重启 AutoLang LSP 服务器",
+  "command.toggleReparseTrace.title": "切换 Reparse Trace 显示",
+  "command.showSyntaxTree.title": "显示语法树",
   "configuration.title": "AutoLang",
   "configuration.cli.path.description": "AutoLang CLI 可执行文件路径。默认使用 PATH 中的 \"autolang\" 命令，扩展会通过 \"lsp\" 子命令启动语言服务器。",
-  "configuration.dev.runServerFromSource.description": "仅在从 AutoLang 仓库源码运行或调试此扩展时生效。从仓库源码启动语言服务器，而不是使用 autolang.cli.path。"
+  "configuration.dev.runServerFromSource.description": "仅在从 AutoLang 仓库源码运行或调试此扩展时生效。从仓库源码启动语言服务器，而不是使用 autolang.cli.path。",
+  "configuration.debug.reparseTrace.description": "增量 reparse 后，短暂闪烁 AutoLang 语言服务器报告的语法范围。"
 }

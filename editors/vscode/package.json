@@ -44,6 +44,16 @@
         "command": "autolang.restartServer",
         "title": "%command.restartServer.title%",
         "category": "%command.category%"
+      },
+      {
+        "command": "autolang.toggleReparseTrace",
+        "title": "%command.toggleReparseTrace.title%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "autolang.showSyntaxTree",
+        "title": "%command.showSyntaxTree.title%",
+        "category": "%command.category%"
       }
     ],
     "configuration": {
@@ -59,6 +69,11 @@
           "type": "boolean",
           "default": true,
           "description": "%configuration.dev.runServerFromSource.description%"
+        },
+        "autolang.debug.reparseTrace": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.debug.reparseTrace.description%"
         }
       }
     },

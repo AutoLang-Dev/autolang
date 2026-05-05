@@ -4,7 +4,10 @@
   "command.startServer.title": "Start AutoLang LSP Server",
   "command.stopServer.title": "Stop AutoLang LSP Server",
   "command.restartServer.title": "Restart AutoLang LSP Server",
+  "command.toggleReparseTrace.title": "Toggle Reparse Trace",
+  "command.showSyntaxTree.title": "Show Syntax Tree",
   "configuration.title": "AutoLang",
   "configuration.cli.path.description": "Path to the AutoLang CLI binary. Defaults to the \"autolang\" command on PATH, and the extension starts the language server with the \"lsp\" subcommand.",
-  "configuration.dev.runServerFromSource.description": "Only applies when running or debugging this extension from the AutoLang repository source. Starts the language server from the repository source instead of using autolang.cli.path."
+  "configuration.dev.runServerFromSource.description": "Only applies when running or debugging this extension from the AutoLang repository source. Starts the language server from the repository source instead of using autolang.cli.path.",
+  "configuration.debug.reparseTrace.description": "Flash the syntax range reported by the AutoLang language server after incremental reparsing."
 }
