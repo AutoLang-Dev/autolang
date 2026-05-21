@@ -1,13 +1,12 @@
 mod document;
 mod semantic_tokens;
 
-use crate::server::semantic_tokens::tokens_legend;
-use line_index::LineIndex;
+use crate::server::{document::Document, semantic_tokens::tokens_legend};
 use lsp_types::*;
 use std::collections::HashMap;
 
 pub struct Server {
-  documents: HashMap<Uri, (String, LineIndex)>,
+  documents: HashMap<Uri, Document>,
 }
 
 impl Server {

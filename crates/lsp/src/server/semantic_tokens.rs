@@ -76,18 +76,18 @@ fn map_token_kind(kind: TokenKind, text: &str) -> Option<u32> {
 
 impl Server {
   pub fn semantic_tokens(&self, uri: &Uri) -> SemanticTokens {
-    let Some((src, index)) = self.get_document(uri) else {
+    let Some(doc) = self.get_document(uri) else {
       return SemanticTokens {
         result_id: None,
         data: vec![],
       };
     };
 
-    let shebang_len = strip_shebang(src);
+    let shebang_len = strip_shebang(doc.text());
 
     let mut tokens = Vec::new();
     let mut pos = TextSize::new(shebang_len as u32);
-    let (shebang, mut rest) = src.split_at(shebang_len);
+    let (shebang, mut rest) = doc.text().split_at(shebang_len);
     let (mut prev_line, mut prev_col) = (0, 0);
 
     if shebang_len != 0 {
@@ -109,8 +109,8 @@ impl Server {
         continue;
       };
 
-      let line_col = index.line_col(pos);
-      let line_col = index.to_wide(WideEncoding::Utf16, line_col).unwrap();
+      let line_col = doc.index().line_col(pos);
+      let line_col = doc.index().to_wide(WideEncoding::Utf16, line_col).unwrap();
 
       let start_col = if line_col.line == prev_line {
         prev_col
