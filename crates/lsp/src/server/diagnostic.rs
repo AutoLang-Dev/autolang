@@ -1,9 +1,8 @@
 use crate::server::{Server, document::Document};
-use line_index::WideEncoding;
 use locale::tr;
 use lsp_server::{Connection, Message, Notification};
 use lsp_types::{
-  Diagnostic, DiagnosticSeverity, Position, PublishDiagnosticsParams, Range, Uri,
+  Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Uri,
   notification::{Notification as _, PublishDiagnostics},
 };
 use parser::Error;
@@ -24,10 +23,7 @@ fn collect_diag(diags: &mut Vec<Diagnostic>, tree: &Red, doc: &Document) {
 
   match diag {
     DiagPayload::Diag(err) => {
-      let line_col = doc.index().line_col(tree.range().start());
-      let line_col = doc.index().to_wide(WideEncoding::Utf16, line_col).unwrap();
-      let position = Position::new(line_col.line, line_col.col);
-      let range = Range::new(position, position);
+      let range = doc.span_to_lsp_range(tree.range());
 
       let mut diag = Diagnostic::new_simple(range, error_message(*err));
       diag.severity = Some(DiagnosticSeverity::ERROR);

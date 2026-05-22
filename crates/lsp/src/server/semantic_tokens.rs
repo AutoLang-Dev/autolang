@@ -1,6 +1,8 @@
 use crate::server::Server;
 use line_index::WideEncoding;
-use lsp_types::{SemanticToken, SemanticTokenType, SemanticTokens, SemanticTokensLegend, Uri};
+use lsp_types::{
+  Position, SemanticToken, SemanticTokenType, SemanticTokens, SemanticTokensLegend, Uri,
+};
 use parser::{SyntaxKind, T};
 use syntax::Red;
 
@@ -108,7 +110,7 @@ impl Server {
     };
 
     let mut tokens = Vec::new();
-    let (mut prev_line, mut prev_col) = (0, 0);
+    let mut prev_pos = Position::default();
 
     for token in doc.syntax_tree().tokens() {
       let text = doc.text_of(token.range());
@@ -117,24 +119,23 @@ impl Server {
         continue;
       };
 
-      let line_col = doc.index().line_col(token.offset());
-      let line_col = doc.index().to_wide(WideEncoding::Utf16, line_col).unwrap();
+      let pos = doc.offset_to_lsp_position(token.offset());
 
-      let start_col = if line_col.line == prev_line {
-        prev_col
+      let start_character = if pos.line == prev_pos.line {
+        prev_pos.character
       } else {
         0
       };
 
       tokens.push(SemanticToken {
-        delta_line: line_col.line - prev_line,
-        delta_start: line_col.col - start_col,
+        delta_line: pos.line - prev_pos.line,
+        delta_start: pos.character - start_character,
         length: WideEncoding::Utf16.measure(text) as u32,
         token_type: ty as u32,
         token_modifiers_bitset: 0,
       });
 
-      (prev_line, prev_col) = (line_col.line, line_col.col);
+      prev_pos = pos;
     }
 
     SemanticTokens {
