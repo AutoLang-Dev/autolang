@@ -8,6 +8,7 @@ license.workspace = true
 anyhow = "1.0.102"
 parser = { path = "../parser" }
 syntax = { path = "../syntax" }
+locale = { path = "../locale" }
 line-index = "0.1.2"
 lsp-server = "0.7.9"
 lsp-types = "0.97.0"

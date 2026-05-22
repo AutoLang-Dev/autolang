@@ -1,3 +1,4 @@
+mod diagnostic;
 mod document;
 mod semantic_tokens;
 

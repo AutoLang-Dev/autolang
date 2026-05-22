@@ -1,7 +1,7 @@
+use super::tr::*;
+use parser::SyntaxKind;
 use std::sync::RwLock;
 use unic_langid::{LanguageIdentifier, lang, langid, script};
-
-use super::tr::*;
 
 pub trait Language: Sync {
   fn hello_world(&self) -> String {
@@ -69,6 +69,33 @@ pub trait Language: Sync {
       "{{before-help}}{{about-with-newline}}\n{} {{usage}}\n\n{{all-args}}{{after-help}}",
       self.help_usage_heading()
     )
+  }
+
+  fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
+    format!(
+      "expected {}, got {}",
+      self.syntax_kind_name(expected),
+      self.syntax_kind_name(actual)
+    )
+  }
+
+  fn syntax_kind_name(&self, kind: SyntaxKind) -> String {
+    match kind.fixed_text() {
+      Some(text) if kind.is_keyword() => format!("keyword `{text}`"),
+      Some(text) => text.into(),
+      None => match kind {
+        SyntaxKind::Ident => "identifier".into(),
+        SyntaxKind::Label => "label".into(),
+        SyntaxKind::Int => "integer literal".into(),
+        SyntaxKind::Char => "character literal".into(),
+        SyntaxKind::Byte => "byte literal".into(),
+        SyntaxKind::String | SyntaxKind::RawString => "string literal".into(),
+        SyntaxKind::Eof => "end of file".into(),
+        SyntaxKind::Unknown => "unknown token".into(),
+        SyntaxKind::UnknownPrefix => "unknown prefix".into(),
+        _ => format!("{kind:?}"),
+      },
+    }
   }
 }
 

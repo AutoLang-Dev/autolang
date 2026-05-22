@@ -29,7 +29,7 @@ pub fn run() -> anyhow::Result<()> {
         }
         handle_request(&mut server, &conn, req)?;
       }
-      Message::Notification(not) => handle_notification(&mut server, not)?,
+      Message::Notification(not) => handle_notification(&mut server, &conn, not)?,
       _ => (),
     }
   }
@@ -62,11 +62,17 @@ pub fn handle_request(server: &mut Server, conn: &Connection, req: Request) -> a
   Ok(())
 }
 
-pub fn handle_notification(server: &mut Server, not: Notification) -> anyhow::Result<()> {
+pub fn handle_notification(
+  server: &mut Server,
+  conn: &Connection,
+  not: Notification,
+) -> anyhow::Result<()> {
   match not.method.as_str() {
     DidOpenTextDocument::METHOD => {
       let DidOpenTextDocumentParams { text_document } = from_value(not.params)?;
-      server.update_document(text_document.uri, text_document.text);
+      let uri = text_document.uri;
+      server.update_document(uri.clone(), text_document.text);
+      server.publish_diagnostic(&uri, conn)?;
     }
     DidChangeTextDocument::METHOD => {
       let DidChangeTextDocumentParams {
@@ -74,7 +80,9 @@ pub fn handle_notification(server: &mut Server, not: Notification) -> anyhow::Re
         content_changes,
       } = from_value(not.params)?;
       if let Some(change) = content_changes.into_iter().last() {
-        server.update_document(text_document.uri, change.text);
+        let uri = text_document.uri;
+        server.update_document(uri.clone(), change.text);
+        server.publish_diagnostic(&uri, conn)?;
       }
     }
     DidCloseTextDocument::METHOD => {
