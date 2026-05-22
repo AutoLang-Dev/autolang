@@ -11,6 +11,7 @@ use lsp_types::{
   request::{Request as _, SemanticTokensFullRequest},
 };
 use serde_json::{from_value, to_value};
+use syntax::Indel;
 
 pub fn run() -> anyhow::Result<()> {
   let (conn, io_threads) = Connection::stdio();
@@ -71,7 +72,7 @@ pub fn handle_notification(
     DidOpenTextDocument::METHOD => {
       let DidOpenTextDocumentParams { text_document } = from_value(not.params)?;
       let uri = text_document.uri;
-      server.update_document(uri.clone(), text_document.text);
+      server.update_document(&uri, text_document.text);
       server.publish_diagnostic(&uri, conn)?;
     }
     DidChangeTextDocument::METHOD => {
@@ -79,11 +80,21 @@ pub fn handle_notification(
         text_document,
         content_changes,
       } = from_value(not.params)?;
-      if let Some(change) = content_changes.into_iter().last() {
-        let uri = text_document.uri;
-        server.update_document(uri.clone(), change.text);
-        server.publish_diagnostic(&uri, conn)?;
+      let uri = text_document.uri;
+      let doc = server.get_document_mut(&uri).unwrap();
+
+      if content_changes.len() == 1 && content_changes[0].range.is_none() {
+        doc.set_text(&content_changes[0].text);
+      } else {
+        for change in content_changes {
+          let delete = doc.lsp_range_to_span(change.range.unwrap());
+          let insert = change.text;
+          let indel = Indel { delete, insert };
+          doc.apply_change(&indel);
+        }
       }
+
+      server.publish_diagnostic(&uri, conn)?;
     }
     DidCloseTextDocument::METHOD => {
       let DidCloseTextDocumentParams { text_document } = from_value(not.params)?;

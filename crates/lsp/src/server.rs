@@ -19,7 +19,9 @@ impl Server {
 
   pub fn capabilities() -> ServerCapabilities {
     ServerCapabilities {
-      text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
+      text_document_sync: Some(TextDocumentSyncCapability::Kind(
+        TextDocumentSyncKind::INCREMENTAL,
+      )),
       semantic_tokens_provider: Some(SemanticTokensServerCapabilities::SemanticTokensOptions(
         SemanticTokensOptions {
           legend: tokens_legend(),
