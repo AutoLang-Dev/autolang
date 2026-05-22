@@ -331,11 +331,12 @@ name = "lsp"
 version = "0.0.1"
 dependencies = [
  "anyhow",
- "lexer",
  "line-index",
  "lsp-server",
  "lsp-types",
+ "parser",
  "serde_json",
+ "syntax",
 ]
 
 [[package]]

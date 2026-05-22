@@ -6,7 +6,8 @@ license.workspace = true
 
 [dependencies]
 anyhow = "1.0.102"
-lexer = { path = "../lexer" }
+parser = { path = "../parser" }
+syntax = { path = "../syntax" }
 line-index = "0.1.2"
 lsp-server = "0.7.9"
 lsp-types = "0.97.0"

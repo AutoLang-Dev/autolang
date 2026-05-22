@@ -1,7 +1,8 @@
 use crate::server::Server;
-use lexer::{TokenKind, lex, strip_shebang};
-use line_index::{TextSize, WideEncoding};
+use line_index::WideEncoding;
 use lsp_types::{SemanticToken, SemanticTokenType, SemanticTokens, SemanticTokensLegend, Uri};
+use parser::{SyntaxKind, T};
+use syntax::Red;
 
 macro_rules! define_tokens {
   ( $($name:ident => $token:ident),* $(,)? ) => {
@@ -11,6 +12,7 @@ macro_rules! define_tokens {
         $name,
       )*
     }
+    use TokenType::*;
 
     pub fn tokens_legend() -> SemanticTokensLegend {
       SemanticTokensLegend {
@@ -23,55 +25,77 @@ macro_rules! define_tokens {
   };
 }
 
-macro_rules! define_keywords {
-  ($($kw:ident),* $(,)?) => {
-    fn is_keyword(text: &str) -> bool {
-      matches!(text, $(stringify!($kw))|*)
-    }
-  };
-}
-
 define_tokens! {
   Comment => COMMENT,
   Keyword => KEYWORD,
+  Module => NAMESPACE,
+  Function => FUNCTION,
+  Type => TYPE,
+  Field => PROPERTY,
+  Method => METHOD,
+  Decorator => DECORATOR,
+  Modifier => MODIFIER,
   Ident => VARIABLE,
   String => STRING,
   Number => NUMBER,
-  Operator => OPERATOR,
   Label => MACRO,
 }
 
-define_keywords!(
-  as, break, case, cont, else, fn, for, if, impl, iterate, mod, mut, nominal, pri, pro, pub,
-  return, self, type, using, while, true, false
-);
+fn map_name(name: &Red) -> Option<TokenType> {
+  use SyntaxKind as S;
 
-fn map_token_kind(kind: TokenKind, text: &str) -> Option<u32> {
-  if kind == TokenKind::Whitespace {
-    return None;
-  }
+  let parent = name.parent()?;
+  let ty = match parent.kind() {
+    S::Rename => Module,
+    S::ModuleItem => Module,
+    S::TypeItem => Type,
+    S::FunctionItem => Function,
+    S::FieldName | S::FieldExpr => Field,
+    S::PathSegment => 'blk: {
+      let path = parent.parent()?;
+      if path.last_child().unwrap().green() != parent.green() {
+        break 'blk Module;
+      }
 
-  let tt = match kind {
-    TokenKind::Comment => TokenType::Comment,
-    TokenKind::Literal => {
-      let bytes = text.as_bytes();
-      match bytes[0] {
-        b'"' | b'\'' | b'b' => TokenType::String,
-        b'0'..=b'9' => TokenType::Number,
+      let parent = path.parent()?;
+      match parent.kind() {
+        S::AttrItem => Decorator,
+        S::MethodCallExpr => Method,
+        S::PathType => Type,
+        S::UsingTree => Module,
+        S::PathExpr => {
+          if let Some(parent) = parent.parent()
+            && parent.kind() == S::CallExpr
+          {
+            Function
+          } else {
+            Ident
+          }
+        }
         _ => unreachable!(),
       }
     }
-    TokenKind::Ident => {
-      if is_keyword(text) {
-        TokenType::Keyword
-      } else {
-        TokenType::Ident
-      }
-    }
-    TokenKind::Label => TokenType::Label,
-    _ => TokenType::Operator,
+    _ => return None,
   };
-  Some(tt as u32)
+
+  Some(ty)
+}
+
+fn map_token(token: &Red) -> Option<TokenType> {
+  use SyntaxKind as S;
+
+  let ty = match token.kind() {
+    S::Ident | T![_] => map_name(token).unwrap_or(Ident),
+    S::Int => Number,
+    S::Char | S::Byte | S::String | S::RawString => String,
+    S::Comment | S::Shebang => Comment,
+    S::Label => Label,
+    T![pub] | T![pro] | T![pri] => Modifier,
+    s if s.is_keyword() => Keyword,
+    _ => return None,
+  };
+
+  Some(ty)
 }
 
 impl Server {
@@ -83,33 +107,17 @@ impl Server {
       };
     };
 
-    let shebang_len = strip_shebang(doc.text());
-
     let mut tokens = Vec::new();
-    let mut pos = TextSize::new(shebang_len as u32);
-    let (shebang, mut rest) = doc.text().split_at(shebang_len);
     let (mut prev_line, mut prev_col) = (0, 0);
 
-    if shebang_len != 0 {
-      tokens.push(SemanticToken {
-        delta_line: 0,
-        delta_start: 0,
-        length: WideEncoding::Utf16.measure(shebang) as u32,
-        token_type: TokenType::Comment as u32,
-        token_modifiers_bitset: 0,
-      });
-    }
+    for token in doc.syntax_tree().tokens() {
+      let text = doc.text_of(token.range());
 
-    for token in lex(rest) {
-      let text;
-      (text, rest) = rest.split_at(token.len as usize);
-
-      let Some(token_type) = map_token_kind(token.kind, text) else {
-        pos += TextSize::new(token.len);
+      let Some(ty) = map_token(&token) else {
         continue;
       };
 
-      let line_col = doc.index().line_col(pos);
+      let line_col = doc.index().line_col(token.offset());
       let line_col = doc.index().to_wide(WideEncoding::Utf16, line_col).unwrap();
 
       let start_col = if line_col.line == prev_line {
@@ -122,12 +130,11 @@ impl Server {
         delta_line: line_col.line - prev_line,
         delta_start: line_col.col - start_col,
         length: WideEncoding::Utf16.measure(text) as u32,
-        token_type,
+        token_type: ty as u32,
         token_modifiers_bitset: 0,
       });
 
       (prev_line, prev_col) = (line_col.line, line_col.col);
-      pos += TextSize::new(token.len);
     }
 
     SemanticTokens {

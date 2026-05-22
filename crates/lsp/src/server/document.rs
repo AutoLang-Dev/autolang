@@ -1,16 +1,29 @@
 use crate::server::Server;
 use line_index::{LineIndex, TextRange};
 use lsp_types::Uri;
+use parser::{LexedStr, parse};
+use syntax::{Red, build_syntax_tree};
 
 pub struct Document {
   text: String,
   index: LineIndex,
+  syntax_tree: Red,
 }
 
 impl Document {
   pub fn new(text: String) -> Self {
     let index = LineIndex::new(&text);
-    Self { text, index }
+
+    let lexed = LexedStr::new(&text);
+    let output = parse(&lexed);
+    let green = build_syntax_tree(&lexed, &output);
+    let syntax_tree = Red::new_root(green);
+
+    Self {
+      text,
+      index,
+      syntax_tree,
+    }
   }
 
   pub fn text(&self) -> &str {
@@ -23,6 +36,10 @@ impl Document {
 
   pub fn index(&self) -> &LineIndex {
     &self.index
+  }
+
+  pub fn syntax_tree(&self) -> &Red {
+    &self.syntax_tree
   }
 }
 
