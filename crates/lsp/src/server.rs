@@ -1,5 +1,6 @@
 mod diagnostic;
 mod document;
+mod document_symbols;
 mod reparse_trace;
 mod semantic_tokens;
 mod syntax_tree;
@@ -33,6 +34,7 @@ impl Server {
           ..Default::default()
         },
       )),
+      document_symbol_provider: Some(OneOf::Left(true)),
       ..Default::default()
     }
   }

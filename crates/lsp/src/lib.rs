@@ -8,11 +8,11 @@ use locale::tr;
 use lsp_server::{Connection, ErrorCode, Message, Notification, Request, Response, ResponseError};
 use lsp_types::{
   DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
-  InitializeParams, SemanticTokensParams,
+  DocumentSymbolParams, DocumentSymbolResponse, InitializeParams, SemanticTokensParams,
   notification::{
     DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument, Notification as _,
   },
-  request::{Request as _, SemanticTokensFullRequest},
+  request::{DocumentSymbolRequest, Request as _, SemanticTokensFullRequest},
 };
 use serde_json::{from_value, to_value};
 use syntax::Indel;
@@ -68,6 +68,16 @@ pub fn handle_request(server: &mut Server, conn: &Connection, req: Request) -> a
         return Ok(());
       };
       let result = to_value(tree)?;
+      let resp = Response::new_ok(id, result);
+      conn.sender.send(Message::Response(resp))?;
+    }
+
+    DocumentSymbolRequest::METHOD => {
+      let (id, params) = req.extract::<DocumentSymbolParams>(DocumentSymbolRequest::METHOD)?;
+      let symbols = server
+        .document_symbols(&params.text_document.uri)
+        .map(DocumentSymbolResponse::Nested);
+      let result = to_value(symbols)?;
       let resp = Response::new_ok(id, result);
       conn.sender.send(Message::Response(resp))?;
     }
