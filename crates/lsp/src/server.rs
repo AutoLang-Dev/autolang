@@ -1,6 +1,9 @@
 mod diagnostic;
 mod document;
 mod semantic_tokens;
+mod syntax_tree;
+
+pub use syntax_tree::*;
 
 use crate::server::{document::Document, semantic_tokens::tokens_legend};
 use lsp_types::*;

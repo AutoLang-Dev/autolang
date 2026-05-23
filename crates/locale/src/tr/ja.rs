@@ -63,6 +63,10 @@ impl crate::Language for ja {
     "COMMAND".into()
   }
 
+  fn lsp_document_not_found(&self) -> String {
+    "ドキュメントが見つかりません".into()
+  }
+
   fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
     format!(
       "{} が必要ですが、{} が見つかりました",

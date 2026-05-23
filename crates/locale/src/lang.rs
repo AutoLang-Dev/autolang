@@ -71,6 +71,10 @@ pub trait Language: Sync {
     )
   }
 
+  fn lsp_document_not_found(&self) -> String {
+    "document not found".into()
+  }
+
   fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
     format!(
       "expected {}, got {}",

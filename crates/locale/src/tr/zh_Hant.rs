@@ -63,6 +63,10 @@ impl crate::Language for zh_Hant {
     "命令".into()
   }
 
+  fn lsp_document_not_found(&self) -> String {
+    "找不到文件".into()
+  }
+
   fn diagnostic_expected_got(&self, expected: SyntaxKind, actual: SyntaxKind) -> String {
     format!(
       "期望 {}，但遇到 {}",

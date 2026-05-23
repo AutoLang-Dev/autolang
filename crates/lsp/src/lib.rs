@@ -1,6 +1,7 @@
 mod server;
 
-use crate::server::Server;
+use crate::server::{Server, SyntaxTreeParams, SyntaxTreeRequest};
+use locale::tr;
 use lsp_server::{Connection, ErrorCode, Message, Notification, Request, Response, ResponseError};
 use lsp_types::{
   DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
@@ -45,6 +46,25 @@ pub fn handle_request(server: &mut Server, conn: &Connection, req: Request) -> a
       let (id, params) = req.extract::<SemanticTokensParams>(SemanticTokensFullRequest::METHOD)?;
       let tokens = server.semantic_tokens(&params.text_document.uri);
       let result = to_value(tokens)?;
+      let resp = Response::new_ok(id, result);
+      conn.sender.send(Message::Response(resp))?;
+    }
+
+    SyntaxTreeRequest::METHOD => {
+      let (id, params) = req.extract::<SyntaxTreeParams>(SyntaxTreeRequest::METHOD)?;
+      let Some(tree) = server.syntax_tree(&params.text_document.uri) else {
+        conn.sender.send(Message::Response(Response {
+          id,
+          result: None,
+          error: Some(ResponseError {
+            code: ErrorCode::InvalidParams as i32,
+            message: tr().lsp_document_not_found(),
+            data: None,
+          }),
+        }))?;
+        return Ok(());
+      };
+      let result = to_value(tree)?;
       let resp = Response::new_ok(id, result);
       conn.sender.send(Message::Response(resp))?;
     }
