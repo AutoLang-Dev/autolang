@@ -1,6 +1,9 @@
 mod server;
 
-use crate::server::{Server, SyntaxTreeParams, SyntaxTreeRequest};
+use crate::server::{
+  ReparseTrace, ReparseTraceParams, Server, SyntaxTreeParams, SyntaxTreeRequest,
+};
+use line_index::TextRange;
 use locale::tr;
 use lsp_server::{Connection, ErrorCode, Message, Notification, Request, Response, ResponseError};
 use lsp_types::{
@@ -102,6 +105,7 @@ pub fn handle_notification(
       } = from_value(not.params)?;
       let uri = text_document.uri;
       let doc = server.get_document_mut(&uri).unwrap();
+      let mut ranges = Vec::new();
 
       if content_changes.len() == 1 && content_changes[0].range.is_none() {
         doc.set_text(&content_changes[0].text);
@@ -110,11 +114,26 @@ pub fn handle_notification(
           let delete = doc.lsp_range_to_span(change.range.unwrap());
           let insert = change.text;
           let indel = Indel { delete, insert };
-          doc.apply_change(&indel);
+
+          if let Some(trace) = doc.apply_change(&indel) {
+            assert!(trace.contains_range(indel.delete));
+
+            let trace = TextRange::at(
+              trace.start(),
+              trace.len() - indel.delete.len() + indel.insert_len(),
+            );
+            let range = doc.span_to_lsp_range(trace);
+            ranges.push(range);
+          }
         }
       }
 
       server.publish_diagnostic(&uri, conn)?;
+
+      conn.sender.send(Message::Notification(Notification::new(
+        ReparseTrace::METHOD.to_string(),
+        ReparseTraceParams::new(uri, ranges),
+      )))?;
     }
     DidCloseTextDocument::METHOD => {
       let DidCloseTextDocumentParams { text_document } = from_value(not.params)?;
