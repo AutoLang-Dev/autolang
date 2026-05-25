@@ -1,18 +1,16 @@
-mod attrs;
-mod expr;
-mod func;
-mod items;
-mod pat;
-mod paths;
-mod reparser;
-mod stmts;
-mod token_trees;
-mod types;
+pub mod attrs;
+pub mod expr;
+pub mod func;
+pub mod items;
+pub mod pat;
+pub mod paths;
+pub mod stmts;
+pub mod token_trees;
+pub mod types;
 
 mod prelude {
   pub use super::*;
   pub use crate::{
-    Input, Output,
     SyntaxKind::{self, *},
     T,
     infra::{
@@ -24,8 +22,6 @@ mod prelude {
 }
 
 use prelude::*;
-
-pub use reparser::*;
 
 pub fn source_file(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
