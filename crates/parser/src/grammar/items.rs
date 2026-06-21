@@ -28,11 +28,9 @@ pub fn item(p: &mut Parser, marker: Option<Marker>) -> CompletedMarker {
     }
     UsingItem => using_item_body(p),
     BindingItem => {
-      let binding = p.start();
       pat::pattern(p);
       p.expect(T![:]);
       binding_item_body(p);
-      p.complete(binding, Binding);
     }
     _ => {
       expect_ident(p);

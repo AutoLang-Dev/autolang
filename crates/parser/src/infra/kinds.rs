@@ -134,8 +134,7 @@ pub enum SyntaxKind {
   Visibility,
   ErrorItem,
 
-  // Bindings, parameters, and fields.
-  Binding,
+  // Parameters, and fields.
   ParameterList,
   Parameter,
   TupleField,
