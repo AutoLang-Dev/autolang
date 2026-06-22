@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "x: = 42;"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(BindingItem),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Eq(1),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [],
+}

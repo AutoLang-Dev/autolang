@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests/tree_step.rs
+description: "foo: mod; // trailing"
+expression: steps
+---
+[
+    Enter(SourceFile),
+    Enter(ModuleInner),
+    Enter(ModuleItem),
+    Ident("foo"),
+    Colon(":"),
+    Whitespace(" "),
+    KwMod("mod"),
+    Semi(";"),
+    Exit,
+    Exit,
+    Whitespace(" "),
+    Comment("// trailing"),
+    Exit,
+]

@@ -1,0 +1,9 @@
+---
+source: crates/parser/src/tests/parser.rs
+description: a->b
+expression: output.steps()
+---
+[
+    Ident(1),
+    Minus(1),
+]
