@@ -1,6 +1,5 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-assertion_line: 62
 description: "x: = a + b * c == d && e;"
 expression: parse(input)
 ---
@@ -9,7 +8,6 @@ Output {
         Enter(SourceFile),
         Enter(ModuleInner),
         Enter(BindingItem),
-        Enter(Binding),
         Enter(IdentPat),
         Ident(1),
         Exit,
@@ -58,7 +56,6 @@ Output {
         Enter(Path),
         Enter(PathSegment),
         Ident(1),
-        Exit,
         Exit,
         Exit,
         Exit,

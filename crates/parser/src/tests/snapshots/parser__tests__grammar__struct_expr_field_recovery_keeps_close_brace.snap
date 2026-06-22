@@ -1,6 +1,5 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-assertion_line: 108
 description: "x: = { key: val 111 };"
 expression: parse(input)
 ---
@@ -9,7 +8,6 @@ Output {
         Enter(SourceFile),
         Enter(ModuleInner),
         Enter(BindingItem),
-        Enter(Binding),
         Enter(IdentPat),
         Ident(1),
         Exit,
@@ -33,7 +31,6 @@ Output {
         Error(0),
         Int(1),
         CloseBrace(1),
-        Exit,
         Exit,
         Semi(1),
         Exit,
