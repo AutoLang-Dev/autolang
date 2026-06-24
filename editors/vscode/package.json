@@ -44,6 +44,11 @@
         "command": "autolang.restartServer",
         "title": "%command.restartServer.title%",
         "category": "%command.category%"
+      },
+      {
+        "command": "autolang.showSyntaxTree",
+        "title": "%command.showSyntaxTree.title%",
+        "category": "%command.category%"
       }
     ],
     "configuration": {

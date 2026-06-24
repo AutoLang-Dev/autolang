@@ -7,8 +7,11 @@ import {
   State,
 } from 'vscode-languageclient/node';
 import * as path from 'node:path';
+import { showSyntaxTree, SYNTAX_TREE_SCHEME, SyntaxTreeDocumentProvider } from './syntaxTree';
+import { REPARSE_TRACE_NOTIFICATION, ReparseFlash, ReparseTraceParams } from './reparseTrace';
 
 let client: LanguageClient | undefined;
+let reparseFlash: ReparseFlash | undefined;
 
 const CLI_PATH_SETTING = 'cli.path';
 const DEV_RUN_SERVER_FROM_SOURCE_SETTING = 'dev.runServerFromSource';
@@ -94,6 +97,9 @@ async function startServer(
     );
 
     await client.start();
+    client.onNotification(REPARSE_TRACE_NOTIFICATION, (trace: ReparseTraceParams) => {
+      reparseFlash?.show(trace);
+    })
     vscode.window.showInformationMessage(t('AutoLang LSP server started.'));
   } catch (err) {
     client = undefined;
@@ -133,6 +139,9 @@ async function restartServer(
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  const syntaxTreeProvider = new SyntaxTreeDocumentProvider();
+  reparseFlash = new ReparseFlash();
+
   context.subscriptions.push(
     vscode.commands.registerCommand('autolang.startServer', () =>
       startServer(context),
@@ -143,6 +152,17 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('autolang.restartServer', () =>
       restartServer(context),
     ),
+
+    syntaxTreeProvider,
+    vscode.workspace.registerTextDocumentContentProvider(
+      SYNTAX_TREE_SCHEME,
+      syntaxTreeProvider,
+    ),
+    vscode.commands.registerCommand('autolang.showSyntaxTree', () =>
+      showSyntaxTree(client, syntaxTreeProvider),
+    ),
+
+    reparseFlash,
   );
 
   startServer(context);

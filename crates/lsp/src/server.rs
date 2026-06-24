@@ -1,13 +1,18 @@
+mod diagnostic;
 mod document;
+mod document_symbols;
+mod reparse_trace;
 mod semantic_tokens;
+mod syntax_tree;
 
-use crate::server::semantic_tokens::tokens_legend;
-use line_index::LineIndex;
+pub use {reparse_trace::*, syntax_tree::*};
+
+use crate::server::{document::Document, semantic_tokens::tokens_legend};
 use lsp_types::*;
 use std::collections::HashMap;
 
 pub struct Server {
-  documents: HashMap<Uri, (String, LineIndex)>,
+  documents: HashMap<Uri, Document>,
 }
 
 impl Server {
@@ -19,7 +24,9 @@ impl Server {
 
   pub fn capabilities() -> ServerCapabilities {
     ServerCapabilities {
-      text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
+      text_document_sync: Some(TextDocumentSyncCapability::Kind(
+        TextDocumentSyncKind::INCREMENTAL,
+      )),
       semantic_tokens_provider: Some(SemanticTokensServerCapabilities::SemanticTokensOptions(
         SemanticTokensOptions {
           legend: tokens_legend(),
@@ -27,6 +34,7 @@ impl Server {
           ..Default::default()
         },
       )),
+      document_symbol_provider: Some(OneOf::Left(true)),
       ..Default::default()
     }
   }
