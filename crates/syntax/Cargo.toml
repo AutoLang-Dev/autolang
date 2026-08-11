@@ -5,9 +5,9 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-parser = { path = "../parser" }
-rgt = "0.1.1"
-text-size = "1.1.1"
+parser.workspace = true
+rgt.workspace = true
+text-size.workspace = true
 
 [dev-dependencies]
-insta = "1.47.2"
+insta.workspace = true

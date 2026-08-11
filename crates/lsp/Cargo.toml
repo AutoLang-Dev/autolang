@@ -5,14 +5,14 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-anyhow = "1.0.102"
-parser = { path = "../parser" }
-syntax = { path = "../syntax" }
-locale = { path = "../locale" }
-line-index = "0.1.2"
-lsp-server = "0.7.9"
-lsp-types = "0.97.0"
-serde_json = "1.0.149"
-serde = "1.0.228"
-serde_derive = "1.0.228"
-rgt = "0.1.1"
+parser.workspace = true
+syntax.workspace = true
+locale.workspace = true
+anyhow.workspace = true
+line-index.workspace = true
+lsp-server.workspace = true
+lsp-types.workspace = true
+serde_json.workspace = true
+serde.workspace = true
+serde_derive.workspace = true
+rgt.workspace = true
