@@ -1,41 +1,18 @@
 use crate::server::{Server, document::Document};
+use ide::{Diagnostic, collect_diag};
 use locale::tr;
 use lsp_server::{Connection, Message, Notification};
 use lsp_types::{
-  Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Uri,
+  Diagnostic as LspDiagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Uri,
   notification::{Notification as _, PublishDiagnostics},
 };
 use parser::Error;
-use syntax::{DiagPayload, Red};
 
 impl Document {
   pub fn diagnostics(&self) -> Vec<Diagnostic> {
     let mut diags = Vec::new();
-    collect_diag(&mut diags, self.syntax_tree(), self);
+    collect_diag(&mut diags, &self.file.red_tree());
     diags
-  }
-}
-
-fn collect_diag(diags: &mut Vec<Diagnostic>, tree: &Red, doc: &Document) {
-  let Some(diag) = tree.payload().diag.as_ref() else {
-    return;
-  };
-
-  match diag {
-    DiagPayload::Diag(err) => {
-      let range = doc.span_to_lsp_range(tree.range());
-
-      let mut diag = Diagnostic::new_simple(range, error_message(*err));
-      diag.severity = Some(DiagnosticSeverity::ERROR);
-      diag.source = Some("autolang".into());
-
-      diags.push(diag);
-    }
-    _ => {
-      for child in tree.children() {
-        collect_diag(diags, &child, doc);
-      }
-    }
   }
 }
 
@@ -50,7 +27,19 @@ impl Server {
   pub fn publish_diagnostic(&self, uri: &Uri, conn: &Connection) -> anyhow::Result<()> {
     let diags = self
       .get_document(uri)
-      .map(|doc| doc.diagnostics())
+      .map(|doc| {
+        doc
+          .diagnostics()
+          .iter()
+          .map(|diag| {
+            let range = doc.span_to_lsp_range(diag.range);
+            let mut diag = LspDiagnostic::new_simple(range, error_message(diag.error));
+            diag.severity = Some(DiagnosticSeverity::ERROR);
+            diag.source = Some("autolang".into());
+            diag
+          })
+          .collect()
+      })
       .unwrap_or_default();
 
     let params = PublishDiagnosticsParams::new(uri.clone(), diags, None);

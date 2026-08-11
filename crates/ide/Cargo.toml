@@ -1,0 +1,10 @@
+[package]
+name = "ide"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+parser.workspace = true
+syntax.workspace = true
+text-size.workspace = true

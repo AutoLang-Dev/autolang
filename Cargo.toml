@@ -11,6 +11,7 @@ license = "Apache-2.0"
 
 [workspace.dependencies]
 cli.path = "crates/cli"
+ide.path = "crates/ide"
 lexer.path = "crates/lexer"
 locale.path = "crates/locale"
 lsp.path = "crates/lsp"

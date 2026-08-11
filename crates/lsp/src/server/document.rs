@@ -1,65 +1,31 @@
 use crate::server::Server;
+use ide::SourceFile;
 use line_index::{LineIndex, TextRange, TextSize, WideEncoding, WideLineCol};
 use lsp_types::{Position, Range, Uri};
-use parser::{LexedStr, parse};
-use syntax::{Indel, Red, build_syntax_tree, reparse};
+use syntax::Indel;
 
 pub struct Document {
-  text: String,
-  index: LineIndex,
-  syntax_tree: Red,
+  pub file: SourceFile,
+  pub index: LineIndex,
 }
 
 impl Document {
-  pub fn new(text: String) -> Self {
-    let index = LineIndex::new(&text);
-
-    let lexed = LexedStr::new(&text);
-    let output = parse(&lexed);
-    let green = build_syntax_tree(&lexed, &output);
-    let syntax_tree = Red::new_root(green);
-
-    Self {
-      text,
-      index,
-      syntax_tree,
-    }
-  }
-
-  pub fn text(&self) -> &str {
-    &self.text
-  }
-
-  pub fn text_of(&self, range: TextRange) -> &str {
-    &self.text[range]
-  }
-
-  pub fn index(&self) -> &LineIndex {
-    &self.index
-  }
-
-  pub fn syntax_tree(&self) -> &Red {
-    &self.syntax_tree
+  pub fn new(text: impl Into<String>) -> Self {
+    let file = SourceFile::new(text);
+    let index = LineIndex::new(file.text());
+    Self { index, file }
   }
 
   pub fn set_text(&mut self, text: impl Into<String>) {
-    *self = Self::new(text.into());
+    self.file.set_text(text);
+    self.index = LineIndex::new(self.file.text());
   }
 
   pub fn apply_change(&mut self, indel: &Indel) -> Option<TextRange> {
-    let reparse = reparse(&self.syntax_tree, &self.text, indel)?;
-
-    let text = indel.apply_to(&self.text);
-    let index = LineIndex::new(&text);
-    let syntax_tree = Red::new_root(reparse.new);
-
-    *self = Self {
-      text,
-      index,
-      syntax_tree,
-    };
-
-    Some(reparse.old.range())
+    let (file, old) = self.file.apply_change(indel)?;
+    self.file = file;
+    self.index = LineIndex::new(self.file.text());
+    Some(old.range())
   }
 
   pub fn lsp_range_to_span(&self, range: Range) -> TextRange {

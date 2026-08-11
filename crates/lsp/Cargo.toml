@@ -8,6 +8,7 @@ license.workspace = true
 parser.workspace = true
 syntax.workspace = true
 locale.workspace = true
+ide.workspace = true
 anyhow.workspace = true
 line-index.workspace = true
 lsp-server.workspace = true

@@ -29,7 +29,7 @@ fn dump_syntax_tree(doc: &Document) -> Result<String, fmt::Error> {
   let mut indent = "".to_string();
   let mut buf = "".to_string();
 
-  for event in doc.syntax_tree().preorder() {
+  for event in doc.file.red_tree().preorder() {
     match event {
       WalkEvent::Enter(red) => {
         let kind = red.kind();
@@ -41,7 +41,7 @@ fn dump_syntax_tree(doc: &Document) -> Result<String, fmt::Error> {
         write!(&mut buf, "{indent}{kind:?}@{start}..{end}")?;
 
         if red.is_token() {
-          let text = doc.text_of(range);
+          let text = doc.file.text_of(range);
           write!(&mut buf, " {text:?}")?;
 
           if let Some(DiagPayload::Diag(error)) = &red.payload().diag {
