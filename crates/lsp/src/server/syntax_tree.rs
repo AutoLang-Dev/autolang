@@ -1,15 +1,17 @@
-use crate::server::{Server, document::Document};
-use lsp_types::{TextDocumentIdentifier, Uri, notification::Notification};
+use async_inc::QueryCtx;
+use async_lsp::lsp_types::{TextDocumentIdentifier, request::Request};
+use ide::FileId;
 use rgt::red::WalkEvent;
 use serde::{Deserialize, Serialize};
-use std::fmt::{self, Write};
+use std::fmt::Write;
 use syntax::DiagPayload;
 
 #[derive(Debug)]
 pub enum SyntaxTreeRequest {}
 
-impl Notification for SyntaxTreeRequest {
+impl Request for SyntaxTreeRequest {
   type Params = SyntaxTreeParams;
+  type Result = SyntaxTreeResponse;
   const METHOD: &'static str = "autolang/syntaxTree";
 }
 
@@ -21,15 +23,17 @@ pub struct SyntaxTreeParams {
 
 #[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SyntaxTree {
+pub struct SyntaxTreeResponse {
   pub tree: String,
 }
 
-fn dump_syntax_tree(doc: &Document) -> Result<String, fmt::Error> {
+pub async fn syntax_tree(ctx: QueryCtx, id: FileId) -> SyntaxTreeResponse {
+  let file = ctx.get(id);
+
   let mut indent = "".to_string();
   let mut buf = "".to_string();
 
-  for event in doc.file.red_tree().preorder() {
+  for event in file.red_tree().preorder() {
     match event {
       WalkEvent::Enter(red) => {
         let kind = red.kind();
@@ -38,19 +42,19 @@ fn dump_syntax_tree(doc: &Document) -> Result<String, fmt::Error> {
         let start: u32 = range.start().into();
         let end: u32 = range.end().into();
 
-        write!(&mut buf, "{indent}{kind:?}@{start}..{end}")?;
+        write!(&mut buf, "{indent}{kind:?}@{start}..{end}").unwrap();
 
         if red.is_token() {
-          let text = doc.file.text_of(range);
-          write!(&mut buf, " {text:?}")?;
+          let text = file.text_of(range);
+          write!(&mut buf, " {text:?}").unwrap();
 
           if let Some(DiagPayload::Diag(error)) = &red.payload().diag {
-            writeln!(&mut buf)?;
-            write!(&mut buf, "{indent}  diag: {error:?}")?;
+            writeln!(&mut buf).unwrap();
+            write!(&mut buf, "{indent}  diag: {error:?}").unwrap();
           }
         }
 
-        writeln!(&mut buf)?;
+        writeln!(&mut buf).unwrap();
         indent += "  ";
       }
 
@@ -61,15 +65,5 @@ fn dump_syntax_tree(doc: &Document) -> Result<String, fmt::Error> {
     }
   }
 
-  Ok(buf)
-}
-
-impl Server {
-  pub fn syntax_tree(&self, uri: &Uri) -> Option<SyntaxTree> {
-    let doc = self.get_document(uri)?;
-
-    let tree = dump_syntax_tree(doc).ok()?;
-
-    Some(SyntaxTree { tree })
-  }
+  SyntaxTreeResponse { tree: buf }
 }

@@ -1,7 +1,10 @@
+use crate::FileId;
+use async_inc::Query;
+use line_index::TextRange;
 use parser::{SyntaxKind, T};
 use syntax::Red;
-use text_size::TextRange;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenType {
   Comment,
   Keyword,
@@ -77,12 +80,13 @@ fn map_token(token: &Red) -> Option<TokenType> {
   Some(ty)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SemanticToken {
   pub range: TextRange,
   pub token_type: TokenType,
 }
 
-pub fn collect_semantic_tokens(root: &Red) -> Vec<SemanticToken> {
+fn collect_semantic_tokens(root: &Red) -> Vec<SemanticToken> {
   root
     .tokens()
     .filter_map(|token| {
@@ -93,4 +97,16 @@ pub fn collect_semantic_tokens(root: &Red) -> Vec<SemanticToken> {
       })
     })
     .collect()
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct GetTokens(pub FileId);
+
+impl Query for GetTokens {
+  type Value = Vec<SemanticToken>;
+
+  async fn compute(self, ctx: async_inc::QueryCtx) -> Self::Value {
+    let file = ctx.get(self.0);
+    collect_semantic_tokens(&file.red_tree())
+  }
 }

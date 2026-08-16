@@ -1,7 +1,8 @@
-use crate::server::{Server, document::Document};
-use ide::{DocumentSymbol, SymbolKind, collect_symbols};
-use lsp_types::{DocumentSymbol as LspDocumentSymbol, SymbolKind as LspSymbolKind, Uri};
-use syntax::ast::*;
+use crate::server::span_to_lsp_range;
+use async_inc::{Query, QueryCtx};
+use async_lsp::lsp_types::{DocumentSymbol as LspDocumentSymbol, SymbolKind as LspSymbolKind};
+use ide::{DocumentSymbol, FileId, GetSymbols, SymbolKind};
+use line_index::LineIndex;
 
 fn map_symbol_kind(kind: SymbolKind) -> LspSymbolKind {
   match kind {
@@ -12,10 +13,11 @@ fn map_symbol_kind(kind: SymbolKind) -> LspSymbolKind {
   }
 }
 
-fn map_document_symbol(doc: &Document, symbol: DocumentSymbol) -> LspDocumentSymbol {
+fn map_document_symbol(index: &LineIndex, symbol: &DocumentSymbol) -> LspDocumentSymbol {
   let children = symbol
     .children
-    .map(|c| c.into_iter().map(|s| map_document_symbol(doc, s)).collect());
+    .as_ref()
+    .map(|c| c.iter().map(|s| map_document_symbol(index, s)).collect());
 
   #[allow(deprecated)]
   LspDocumentSymbol {
@@ -24,26 +26,19 @@ fn map_document_symbol(doc: &Document, symbol: DocumentSymbol) -> LspDocumentSym
     kind: map_symbol_kind(symbol.kind),
     tags: None,
     deprecated: None,
-    range: doc.span_to_lsp_range(symbol.range),
-    selection_range: doc.span_to_lsp_range(symbol.selection_range),
+    range: span_to_lsp_range(index, symbol.range),
+    selection_range: span_to_lsp_range(index, symbol.selection_range),
     children,
   }
 }
 
-impl Document {
-  pub fn document_symbols(&self) -> Vec<LspDocumentSymbol> {
-    let red = self.file.red_tree().clone();
-    let root = Root::new(red).unwrap();
-    let symbols = collect_symbols(self.file.text(), root);
-    symbols
-      .into_iter()
-      .map(|s| map_document_symbol(self, s))
-      .collect()
-  }
-}
-
-impl Server {
-  pub fn document_symbols(&self, uri: &Uri) -> Option<Vec<LspDocumentSymbol>> {
-    self.get_document(uri).map(|doc| doc.document_symbols())
-  }
+pub async fn document_symbols(ctx: QueryCtx, id: FileId) -> Vec<LspDocumentSymbol> {
+  let file = ctx.get(id);
+  let index = file.index();
+  GetSymbols(id)
+    .execute(ctx)
+    .await
+    .iter()
+    .map(|s| map_document_symbol(index, s))
+    .collect()
 }

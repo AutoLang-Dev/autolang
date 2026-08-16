@@ -1,6 +1,9 @@
+use crate::FileId;
+use async_inc::Query;
+use line_index::TextRange;
 use syntax::ast::*;
-use text_size::TextRange;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SymbolKind {
   Module,
   Type,
@@ -8,6 +11,7 @@ pub enum SymbolKind {
   Field,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DocumentSymbol {
   pub name: String,
   pub kind: SymbolKind,
@@ -33,7 +37,7 @@ macro_rules! symbol {
   (@children $children:expr) => { $children };
 }
 
-pub fn collect_symbols(src: &str, root: Root) -> Vec<DocumentSymbol> {
+fn collect_symbols(src: &str, root: Root) -> Vec<DocumentSymbol> {
   root
     .items()
     .into_iter()
@@ -77,4 +81,16 @@ fn field_symbols(src: &str, s: StructType) -> Vec<DocumentSymbol> {
     .iter()
     .map(|x| symbol!(src, x, SymbolKind::Field))
     .collect()
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct GetSymbols(pub FileId);
+
+impl Query for GetSymbols {
+  type Value = Vec<DocumentSymbol>;
+
+  async fn compute(self, ctx: async_inc::QueryCtx) -> Self::Value {
+    let file = ctx.get(self.0);
+    collect_symbols(file.text(), file.root())
+  }
 }

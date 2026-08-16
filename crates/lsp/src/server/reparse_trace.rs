@@ -1,10 +1,10 @@
-use lsp_types::{Range, TextDocumentIdentifier, Uri, notification::Notification};
+use async_lsp::lsp_types::{Range, TextDocumentIdentifier, Url, notification::Notification};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
-pub enum ReparseTrace {}
+pub enum ReparseTraceNotification {}
 
-impl Notification for ReparseTrace {
+impl Notification for ReparseTraceNotification {
   type Params = ReparseTraceParams;
   const METHOD: &'static str = "autolang/reparseTrace";
 }
@@ -17,7 +17,7 @@ pub struct ReparseTraceParams {
 }
 
 impl ReparseTraceParams {
-  pub fn new(uri: Uri, ranges: Vec<Range>) -> Self {
+  pub fn new(uri: Url, ranges: Vec<Range>) -> Self {
     Self {
       text_document: TextDocumentIdentifier::new(uri),
       ranges,

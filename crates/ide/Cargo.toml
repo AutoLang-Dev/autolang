@@ -7,4 +7,5 @@ license.workspace = true
 [dependencies]
 parser.workspace = true
 syntax.workspace = true
-text-size.workspace = true
+async-inc.workspace = true
+line-index.workspace = true
