@@ -7,7 +7,8 @@
       "name": "Launch Extension",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/editors/vscode"
+        "--extensionDevelopmentPath=${workspaceFolder}/editors/vscode",
+        "${workspaceFolder}/examples",
       ],
       "outFiles": [
         "${workspaceFolder}/editors/vscode/out/**/*.js"
