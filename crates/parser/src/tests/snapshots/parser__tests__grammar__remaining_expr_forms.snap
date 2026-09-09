@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "{ { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } }"
+description: "{ { name, other }; [value; count]; \\a. a; recv.method(arg); 'loop: while cond { break 'loop done } }"
 expression: parse_expr(input)
 ---
 Output {
@@ -49,33 +49,11 @@ Output {
         Exit,
         Enter(ExprStmt),
         Enter(ClosureExpr),
-        KwFn(1),
-        Enter(ParameterList),
-        OpenParen(1),
-        Enter(Parameter),
+        Backslash(1),
         Enter(IdentPat),
         Ident(1),
         Exit,
-        Colon(1),
-        Enter(PathType),
-        Enter(Path),
-        Enter(PathSegment),
-        Ident(1),
-        Exit,
-        Exit,
-        Exit,
-        Exit,
-        CloseParen(1),
-        Exit,
-        ThinArrow(2),
-        Enter(PathType),
-        Enter(Path),
-        Enter(PathSegment),
-        Ident(1),
-        Exit,
-        Exit,
-        Exit,
-        Eq(1),
+        Dot(1),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),

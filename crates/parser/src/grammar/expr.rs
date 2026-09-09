@@ -125,7 +125,7 @@ fn expr_atom(p: &mut Parser) -> CompletedMarker {
     T!['('] => tuple_or_paren_expr(p),
     T!['['] => array_expr(p),
     T!['{'] => brace_expr(p),
-    T![fn] => closure_expr(p),
+    T!['\\'] => closure_expr(p),
     Label => labeled_expr(p),
     T![case] => case_expr(p),
     T![if] => if_expr(p),
@@ -412,14 +412,11 @@ fn cont_expr(p: &mut Parser) -> CompletedMarker {
 
 fn closure_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
-  p.bump(T![fn]);
-  if p.at(T!['(']) {
-    func::parameter_list(p);
+  p.bump(T!['\\']);
+  if !p.at(T![.]) {
+    pat::pattern(p);
   }
-  if p.bump_if(T![->]) {
-    types::type_(p);
-  }
-  p.expect(T![=]);
+  p.bump_if(T![.]);
   expr(p);
   p.complete(m, ClosureExpr)
 }

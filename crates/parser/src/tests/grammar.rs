@@ -124,7 +124,7 @@ fn control_flow_exprs() {
 #[test]
 fn remaining_expr_forms() {
   parse_expr_snap!(
-    r#"{ { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } }"#
+    r#"{ { name, other }; [value; count]; \a. a; recv.method(arg); 'loop: while cond { break 'loop done } }"#
   );
 }
 
