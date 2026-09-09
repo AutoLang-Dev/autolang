@@ -1,6 +1,6 @@
 use crate::{
   Red,
-  ast::{Expr, Name, Pattern, Type, items_in_file_or_module},
+  ast::{Expr, FnType, Name, Type, items_in_file_or_module},
 };
 use parser::SyntaxKind;
 
@@ -34,30 +34,10 @@ define_attr_vis! {
   ErrorItem,
 }
 
-define_nodes! {
-  ParameterList: ParameterList,
-  Parameter: Parameter,
-}
-
-impl ParameterList {
-  define_getter! {
-    params => [Parameter];
-  }
-}
-
-impl Parameter {
-  define_getter! {
-    pat => ! Pattern;
-    ty <= ! Type;
-  }
-}
-
 impl FunctionItem {
   define_getter! {
     name => ! Name;
-    params => ParameterList;
-    mutable => ? KwMut;
-    ret <= ! Name;
+    ty => FnType;
     body <= Expr;
   }
 }

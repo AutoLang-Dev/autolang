@@ -192,7 +192,7 @@ define_nodes! {
 
 impl ArgList {
   define_getter! {
-    args => [Expr];
+    args => ! Expr;
   }
 }
 

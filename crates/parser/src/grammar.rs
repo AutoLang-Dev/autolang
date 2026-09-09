@@ -1,6 +1,5 @@
 pub mod attrs;
 pub mod expr;
-pub mod func;
 pub mod items;
 pub mod pat;
 pub mod paths;

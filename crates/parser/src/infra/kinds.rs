@@ -135,9 +135,7 @@ pub enum SyntaxKind {
   Visibility,
   ErrorItem,
 
-  // Parameters, and fields.
-  ParameterList,
-  Parameter,
+  // Fields.
   TypeField,
   FieldName,
   ExprField,
@@ -146,7 +144,7 @@ pub enum SyntaxKind {
   TypeKind,
   InferType,
   PathType,
-  FnPtrType,
+  FnType,
   RefType,
   PtrType,
   TupleType,

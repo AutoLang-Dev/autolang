@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "#[entry] pub app: fn(input: Int) -> Int = { #[cold] run; }; Point: type = { #[x] pub x: Int, pri y: Int };"
+description: "#[entry] pub app: (Int) -> Int = \\input. { #[cold] run; }; Point: type = { #[x] pub x: Int, pri y: Int };"
 expression: parse(input)
 ---
 Output {
@@ -27,14 +27,10 @@ Output {
         Exit,
         Ident(1),
         Colon(1),
-        KwFn(1),
-        Enter(ParameterList),
+        Enter(FnType),
+        Enter(TupleType),
         OpenParen(1),
-        Enter(Parameter),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
+        Enter(TypeField),
         Enter(PathType),
         Enter(Path),
         Enter(PathSegment),
@@ -53,7 +49,14 @@ Output {
         Exit,
         Exit,
         Exit,
+        Exit,
         Eq(1),
+        Enter(ClosureExpr),
+        Backslash(1),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Dot(1),
         Enter(BlockExpr),
         OpenBrace(1),
         Enter(ExprStmt),
@@ -81,6 +84,7 @@ Output {
         Semi(1),
         Exit,
         CloseBrace(1),
+        Exit,
         Exit,
         Semi(1),
         Exit,

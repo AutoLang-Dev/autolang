@@ -5,7 +5,7 @@ define_node_enum! {
   Type {
     Infer(InferType),
     Path(PathType),
-    FnPtr(FnPtrType),
+    Fn(FnType),
     Ref(RefType),
     Ptr(PtrType),
     Tuple(TupleType),
@@ -41,7 +41,7 @@ impl TypeField {
 define_nodes! {
   InferType: _,
   PathType: _,
-  FnPtrType: _,
+  FnType: _,
   RefType: _,
   PtrType: _,
   TupleType: _,
@@ -57,10 +57,10 @@ impl PathType {
   }
 }
 
-impl FnPtrType {
+impl FnType {
   define_getter! {
     mutable => ? KwMut;
-    params => ! TupleType;
+    params => ! Type;
     ret => ! Type;
   }
 }

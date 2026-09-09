@@ -6,9 +6,9 @@ pub fn type_(p: &mut Parser) -> CompletedMarker {
     Ident | T![self] | T![super] | T![unit] => path_type(p),
     T![&] => ref_type(p),
     T![*] => ptr_type(p),
-    T!['('] => tuple_type(p),
+    T!['('] => tuple_type(p, true),
     T!['['] => array_or_slice_type(p),
-    T!['{'] => record_type(p),
+    T!['{'] => record_type(p, true),
     _ => error_type(p),
   }
 }
@@ -41,7 +41,7 @@ fn ptr_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, PtrType)
 }
 
-pub fn tuple_type(p: &mut Parser) -> CompletedMarker {
+pub fn tuple_type(p: &mut Parser, allow_fn: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['(']);
@@ -56,13 +56,13 @@ pub fn tuple_type(p: &mut Parser) -> CompletedMarker {
 
   let completed = p.complete(m, TupleType);
 
-  if p.at(T![mut]) || p.at(T![->]) {
+  if allow_fn && (p.at(T![mut]) || p.at(T![->])) {
     let m = p.precede(completed);
     p.bump_if(T![mut]);
     if p.expect(T![->]) {
       types::type_(p);
     }
-    p.complete(m, FnPtrType)
+    p.complete(m, FnType)
   } else {
     completed
   }
@@ -82,7 +82,7 @@ pub fn array_or_slice_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, kind)
 }
 
-pub fn record_type(p: &mut Parser) -> CompletedMarker {
+pub fn record_type(p: &mut Parser, allow_fn: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['{']);
@@ -94,7 +94,18 @@ pub fn record_type(p: &mut Parser) -> CompletedMarker {
   }
   p.expect(T!['}']);
 
-  p.complete(m, RecordType)
+  let completed = p.complete(m, RecordType);
+
+  if allow_fn && (p.at(T![mut]) || p.at(T![->])) {
+    let m = p.precede(completed);
+    p.bump_if(T![mut]);
+    if p.expect(T![->]) {
+      types::type_(p);
+    }
+    p.complete(m, FnType)
+  } else {
+    completed
+  }
 }
 
 fn type_field(p: &mut Parser, record: bool) -> CompletedMarker {
@@ -115,6 +126,28 @@ pub fn field_name(p: &mut Parser) -> CompletedMarker {
     expect_ident(p);
   }
   p.complete(m, FieldName)
+}
+
+pub fn fn_type(p: &mut Parser) -> CompletedMarker {
+  let m = p.start();
+
+  match p.current() {
+    T!['('] => tuple_type(p, false),
+    T!['{'] => record_type(p, false),
+    kind => {
+      p.error(Error::Expected {
+        expected: T!['('],
+        actual: kind,
+      });
+      error_type(p)
+    }
+  };
+
+  p.bump_if(T![mut]);
+  p.expect(T![->]);
+  types::type_(p);
+
+  p.complete(m, FnType)
 }
 
 fn error_type(p: &mut Parser) -> CompletedMarker {

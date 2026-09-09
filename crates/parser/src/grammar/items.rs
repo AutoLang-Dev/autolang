@@ -48,7 +48,7 @@ fn item_kind_after_prefix(p: &Parser) -> SyntaxKind {
     T![using] => UsingItem,
     Ident | T![_] if nth_at_single_colon(p, 1) => match p.nth(2) {
       T![mod] => ModuleItem,
-      T![fn] => FunctionItem,
+      T!['('] | T!['{'] => FunctionItem,
       T![type] | T![nominal] => TypeItem,
       _ => ErrorItem,
     },
@@ -74,15 +74,7 @@ pub fn module(p: &mut Parser) -> CompletedMarker {
 }
 
 fn function_item_body(p: &mut Parser) {
-  p.expect(T![fn]);
-
-  if p.at(T!['(']) {
-    func::parameter_list(p);
-  }
-  p.bump_if(T![mut]);
-  if p.bump_if(T![->]) {
-    types::type_(p);
-  }
+  types::fn_type(p);
   if p.bump_if(T![=]) {
     expr::expr(p);
   }

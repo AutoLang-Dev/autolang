@@ -1,15 +1,32 @@
 use super::prelude::*;
 
-pub fn expr(p: &mut Parser) -> CompletedMarker {
-  expr_bp(p, Bp::Atom)
+/// Whether `expr { .. }` may be parsed as a call taking one record argument.
+///
+/// Constructs that own a trailing block (`if`, `while`, `for`) parse their
+/// whole head with [`BraceCall::Forbid`] so that the block stays theirs:
+/// `if a == b { c }` must not parse `b { c }` as a call. The flag therefore has
+/// to travel through *every* operator in the head — one `Allow` leaking into a
+/// nested level is enough to swallow the block.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum BraceCall {
+  Allow,
+  Forbid,
 }
 
-fn expr_bp(p: &mut Parser, min_bp: Bp) -> CompletedMarker {
-  let mut lhs = expr_lhs(p);
+pub fn expr(p: &mut Parser) -> CompletedMarker {
+  expr_bp(p, Bp::Atom, BraceCall::Allow)
+}
+
+fn expr_no_brace_call(p: &mut Parser) -> CompletedMarker {
+  expr_bp(p, Bp::Atom, BraceCall::Forbid)
+}
+
+fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker {
+  let mut lhs = expr_lhs(p, brace_call);
 
   loop {
     lhs = match p.current() {
-      T!['('] => {
+      k @ (T!['('] | T!['{']) if k != T!['{'] || brace_call == BraceCall::Allow => {
         let m = p.precede(lhs);
         arg_list(p);
         p.complete(m, CallExpr)
@@ -39,7 +56,7 @@ fn expr_bp(p: &mut Parser, min_bp: Bp) -> CompletedMarker {
         let m = p.precede(lhs);
         p.bump(T![.]);
 
-        let kind = if matches!(p.nth(1), T!['('] | T![:]) {
+        let kind = if matches!(p.nth(1), T!['('] | T!['{'] | T![:]) {
           paths::path(p);
           arg_list(p);
           MethodCallExpr
@@ -73,13 +90,13 @@ fn expr_bp(p: &mut Parser, min_bp: Bp) -> CompletedMarker {
     }
 
     if let Some(group) = chain_group(op) {
-      lhs = chain_expr(p, lhs, group, min_bp);
+      lhs = chain_expr(p, lhs, group, min_bp, brace_call);
       continue;
     }
 
     let m = p.precede(lhs);
     p.bump(op);
-    expr_bp(p, rbp);
+    expr_bp(p, rbp, brace_call);
     lhs = p.complete(m, BinaryExpr);
   }
 
@@ -91,6 +108,7 @@ fn chain_expr(
   lhs: CompletedMarker,
   group: ChainGroup,
   min_bp: Bp,
+  brace_call: BraceCall,
 ) -> CompletedMarker {
   let m = p.precede(lhs);
 
@@ -100,23 +118,23 @@ fn chain_expr(
     }
 
     p.bump(op);
-    expr_bp(p, rbp);
+    expr_bp(p, rbp, brace_call);
   }
 
   p.complete(m, ChainExpr)
 }
 
-fn expr_lhs(p: &mut Parser) -> CompletedMarker {
+fn expr_lhs(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
   match p.current() {
-    T![-] | T![!] | T![*] => prefix_expr(p),
-    T![&] => ref_expr(p),
+    T![-] | T![!] | T![*] => prefix_expr(p, brace_call),
+    T![&] => ref_expr(p, brace_call),
     T![return] => return_expr(p),
     T![break] => break_expr(p),
     T![cont] => cont_expr(p),
     T![_] => wildcard_expr(p),
     Int | Char | Byte | String | RawString | T![true] | T![false] => literal_expr(p),
     Ident | T![self] | T![super] | T![unit] => path_expr(p),
-    T!['('] => tuple_or_paren_expr(p),
+    T!['('] => tuple_or_paren_expr(p, false),
     T!['['] => array_expr(p),
     T!['{'] => brace_expr(p),
     T!['\\'] => closure_expr(p),
@@ -158,11 +176,11 @@ fn path_expr(p: &mut Parser) -> CompletedMarker {
   p.complete(m, PathExpr)
 }
 
-pub fn tuple_or_paren_expr(p: &mut Parser) -> CompletedMarker {
+pub fn tuple_or_paren_expr(p: &mut Parser, mut tuple: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['(']);
-  let mut tuple = p.at(Ident) && p.nth_at(1, T![:]) || p.at(T![')']);
+  tuple = tuple || (p.at(Ident) && p.nth_at(1, T![:])) || p.at(T![')']);
 
   if !tuple {
     let first = expr(p);
@@ -323,7 +341,7 @@ fn case_arm(p: &mut Parser) -> CompletedMarker {
 fn if_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T![if]);
-  expr(p);
+  expr_no_brace_call(p);
   block_expr(p);
   else_clause(p);
   p.complete(m, IfExpr)
@@ -332,7 +350,7 @@ fn if_expr(p: &mut Parser) -> CompletedMarker {
 fn while_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T![while]);
-  expr(p);
+  expr_no_brace_call(p);
   block_expr(p);
   else_clause(p);
   p.complete(m, WhileExpr)
@@ -343,7 +361,7 @@ fn for_expr(p: &mut Parser) -> CompletedMarker {
   p.expect(T![for]);
   pat::pattern(p);
   p.expect(T![in]);
-  expr(p);
+  expr_no_brace_call(p);
   block_expr(p);
   else_clause(p);
   p.complete(m, ForExpr)
@@ -354,7 +372,7 @@ fn iterate_expr(p: &mut Parser) -> CompletedMarker {
   p.expect(T![iterate]);
   pat::pattern(p);
   p.expect(T![=]);
-  expr(p);
+  expr_no_brace_call(p);
   block_expr(p);
   p.complete(m, IterateExpr)
 }
@@ -370,18 +388,18 @@ fn else_clause(p: &mut Parser) {
   p.complete(m, ElseClause);
 }
 
-fn prefix_expr(p: &mut Parser) -> CompletedMarker {
+fn prefix_expr(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
   let m = p.start();
   p.bump(p.current());
-  expr_bp(p, Bp::Prefix);
+  expr_bp(p, Bp::Prefix, brace_call);
   p.complete(m, PrefixExpr)
 }
 
-fn ref_expr(p: &mut Parser) -> CompletedMarker {
+fn ref_expr(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
   let m = p.start();
   p.bump(T![&]);
   p.bump_if(T![mut]);
-  expr_bp(p, Bp::Prefix);
+  expr_bp(p, Bp::Prefix, brace_call);
   p.complete(m, RefExpr)
 }
 
@@ -442,14 +460,16 @@ fn labeled_expr(p: &mut Parser) -> CompletedMarker {
 pub fn arg_list(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
-  p.expect(T!['(']);
-  while !p.at_eof() && !p.at(T![')']) {
-    expr(p);
-    if !p.bump_if(T![,]) {
-      break;
+  match p.current() {
+    T!['('] => _ = tuple_or_paren_expr(p, true),
+    T!['{'] => _ = record_expr(p),
+    kind => {
+      p.error(Error::Expected {
+        expected: T!['('],
+        actual: kind,
+      });
     }
-  }
-  p.expect(T![')']);
+  };
 
   p.complete(m, ArgList)
 }

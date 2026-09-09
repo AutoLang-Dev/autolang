@@ -76,7 +76,7 @@ fn binding_pattern_struct() {
 
 #[test]
 fn function_item() {
-  parse_snap!(r#"add: fn(a: Int, b: Int) -> Int = a + b;"#);
+  parse_snap!(r#"add: (Int, Int) -> Int = \(a, b). a + b;"#);
 }
 
 #[test]
@@ -182,13 +182,13 @@ fn nominal_type_item() {
 
 #[test]
 fn complex_types() {
-  parse_snap!(r#"F: type = (Int, &mut User) mut -> [*Int; 4];"#);
+  parse_snap!(r#"F: type = &(Int, &mut User) mut -> [*Int; 4];"#);
 }
 
 #[test]
 fn attrs_and_visibility() {
   parse_snap!(
-    r#"#[entry] pub app: fn(input: Int) -> Int = { #[cold] run; }; Point: type = { #[x] pub x: Int, pri y: Int };"#
+    r#"#[entry] pub app: (Int) -> Int = \input. { #[cold] run; }; Point: type = { #[x] pub x: Int, pri y: Int };"#
   );
 }
 
@@ -208,7 +208,7 @@ fn using_items() {
 
 #[test]
 fn mixed_module_inner() {
-  parse_snap!(r#"foo: mod = { add: fn(a: Int) -> Int = a; Point: type = { x: Int }; bar: mod; };"#);
+  parse_snap!(r#"foo: mod = { add: (Int) -> Int = \a. a; Point: type = { x: Int }; bar: mod; };"#);
 }
 
 #[test]
@@ -224,4 +224,14 @@ fn invalid_inner_attr_recovery() {
 #[test]
 fn invalid_using_glob_recovery() {
   parse_snap!(r#"using foo::*; using bar;"#);
+}
+
+#[test]
+fn condition_keeps_its_block() {
+  // A brace call must never swallow the block that follows a head: neither
+  // after a binary operator (`if a == b { c }`) nor after a prefix operator
+  // (`if !a { c }`), nor anywhere inside a chain.
+  parse_expr_snap!(
+    r#"{ if a == b { c } else { d }; while a < b { c } else { d }; if !a { c }; if -a { c }; if &a { c }; if a /\ b { c } }"#
+  );
 }

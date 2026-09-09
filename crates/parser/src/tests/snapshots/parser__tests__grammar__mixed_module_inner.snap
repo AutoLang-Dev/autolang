@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "foo: mod = { add: fn(a: Int) -> Int = a; Point: type = { x: Int }; bar: mod; };"
+description: "foo: mod = { add: (Int) -> Int = \\a. a; Point: type = { x: Int }; bar: mod; };"
 expression: parse(input)
 ---
 Output {
@@ -18,14 +18,10 @@ Output {
         Enter(FunctionItem),
         Ident(1),
         Colon(1),
-        KwFn(1),
-        Enter(ParameterList),
+        Enter(FnType),
+        Enter(TupleType),
         OpenParen(1),
-        Enter(Parameter),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
+        Enter(TypeField),
         Enter(PathType),
         Enter(Path),
         Enter(PathSegment),
@@ -44,11 +40,19 @@ Output {
         Exit,
         Exit,
         Exit,
+        Exit,
         Eq(1),
+        Enter(ClosureExpr),
+        Backslash(1),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Dot(1),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
