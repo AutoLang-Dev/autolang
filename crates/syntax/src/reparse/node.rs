@@ -39,14 +39,9 @@ pub enum Reparser {
   IndexArg,
   Module,
   ParameterList,
+  TupleType,
   StructType,
   TupleOrParenExpr,
-  // Disabled for now: `tuple_or_paren_type` also parses fn-ptr params and
-  // finalizes the same prefix as `ParenType`, `TupleType`, or `FnPtrType`
-  // depending on trailing lookahead. Incremental reparse can therefore mutate
-  // an existing fn-ptr param list into a paren/tuple type. Re-enable this only
-  // after the type parser is refactored so the reparse entry point has a stable
-  // node shape and does not rely on this coupled completion logic.
   UsingTreeList,
 }
 
@@ -64,6 +59,7 @@ impl Reparser {
       Module => Self::Module,
       ParameterList => Self::ParameterList,
       StructType => Self::StructType,
+      TupleType => Self::TupleType,
       TuplePat => Self::TuplePat,
       StructPat => Self::StructPat,
       ParenExpr | TupleExpr => Self::TupleOrParenExpr,
@@ -97,6 +93,7 @@ impl Reparser {
       Self::IndexArg => expr::index_arg,
       Self::Module => items::module,
       Self::ParameterList => func::parameter_list,
+      Self::TupleType => types::tuple_type,
       Self::StructType => types::struct_type,
       Self::TupleOrParenExpr => expr::tuple_or_paren_expr,
       Self::UsingTreeList => items::using_tree_list,

@@ -9,7 +9,6 @@ define_node_enum! {
     Ref(RefType),
     Ptr(PtrType),
     Tuple(TupleType),
-    Paren(ParenType),
     Array(ArrayType),
     Slice(SliceType),
     Struct(StructType),
@@ -55,7 +54,6 @@ define_nodes! {
   RefType: _,
   PtrType: _,
   TupleType: _,
-  ParenType: _,
   ArrayType: _,
   SliceType: _,
   StructType: _,
@@ -93,12 +91,6 @@ impl PtrType {
 impl TupleType {
   define_getter! {
     fileds => [TupleField];
-  }
-}
-
-impl ParenType {
-  define_getter! {
-    ty => ! Type;
   }
 }
 

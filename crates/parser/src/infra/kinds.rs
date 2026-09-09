@@ -151,7 +151,6 @@ pub enum SyntaxKind {
   RefType,
   PtrType,
   TupleType,
-  ParenType,
   ArrayType,
   SliceType,
   StructType,

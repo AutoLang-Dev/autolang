@@ -6,7 +6,7 @@ pub fn type_(p: &mut Parser) -> CompletedMarker {
     Ident | T![self] | T![super] | T![unit] => path_type(p),
     T![&] => ref_type(p),
     T![*] => ptr_type(p),
-    T!['('] => tuple_or_paren_type(p),
+    T!['('] => tuple_type(p),
     T!['['] => array_or_slice_type(p),
     T!['{'] => struct_type(p),
     _ => error_type(p),
@@ -41,34 +41,22 @@ fn ptr_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, PtrType)
 }
 
-pub fn tuple_or_paren_type(p: &mut Parser) -> CompletedMarker {
+pub fn tuple_type(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
-
-  let mut n_fields = 0;
-  let mut trailing_comma = false;
 
   p.expect(T!['(']);
   while !p.at_eof() && !p.at(T![')']) {
     tuple_field(p);
-    n_fields += 1;
-    if p.bump_if(T![,]) {
-      trailing_comma = true;
-    } else {
+
+    if !p.bump_if(T![,]) {
       break;
     }
   }
   p.expect(T![')']);
 
-  let is_fp = p.at(T![mut]) || p.at(T![->]);
+  let completed = p.complete(m, TupleType);
 
-  let kind = if n_fields == 1 && !trailing_comma && !is_fp {
-    ParenType
-  } else {
-    TupleType
-  };
-  let completed = p.complete(m, kind);
-
-  if is_fp {
+  if p.at(T![mut]) || p.at(T![->]) {
     let m = p.precede(completed);
     p.bump_if(T![mut]);
     if p.expect(T![->]) {
