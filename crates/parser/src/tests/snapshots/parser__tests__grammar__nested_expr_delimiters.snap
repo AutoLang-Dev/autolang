@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = ({ a; }, [b, (c)]);"
-expression: parse(input)
+description: "({ a; }, [b, (c)])"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(TupleExpr),
         OpenParen(1),
         Enter(BlockExpr),
@@ -54,10 +46,6 @@ Output {
         CloseBrack(1),
         Exit,
         CloseParen(1),
-        Exit,
-        Semi(1),
-        Exit,
-        Exit,
         Exit,
     ],
     errors: [],

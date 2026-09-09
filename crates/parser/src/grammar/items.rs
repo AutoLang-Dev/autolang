@@ -27,11 +27,6 @@ pub fn item(p: &mut Parser, marker: Option<Marker>) -> CompletedMarker {
       }
     }
     UsingItem => using_item_body(p),
-    BindingItem => {
-      pat::pattern(p);
-      p.expect(T![:]);
-      binding_item_body(p);
-    }
     _ => {
       expect_ident(p);
       p.expect(T![:]);
@@ -51,12 +46,11 @@ pub fn item(p: &mut Parser, marker: Option<Marker>) -> CompletedMarker {
 fn item_kind_after_prefix(p: &Parser) -> SyntaxKind {
   match p.current() {
     T![using] => UsingItem,
-    T![mut] => BindingItem,
     Ident | T![_] if nth_at_single_colon(p, 1) => match p.nth(2) {
       T![mod] => ModuleItem,
       T![fn] => FunctionItem,
       T![type] | T![nominal] => TypeItem,
-      _ => BindingItem,
+      _ => ErrorItem,
     },
     _ => ErrorItem,
   }
@@ -108,21 +102,12 @@ fn type_item_body(p: &mut Parser) {
   }
 }
 
-fn binding_item_body(p: &mut Parser) {
-  if !p.at(T![=]) {
-    types::type_(p);
-  }
-  if p.bump_if(T![=]) {
-    expr::expr(p);
-  }
-}
-
 fn using_item_body(p: &mut Parser) {
   p.expect(T![using]);
   using_tree(p);
 }
 
-fn using_tree(p: &mut Parser) -> CompletedMarker {
+pub fn using_tree(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   match p.current() {

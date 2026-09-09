@@ -75,7 +75,7 @@ fn expect_name(p: &mut Parser) -> bool {
 
 fn is_item_start(p: &Parser) -> bool {
   match p.current() {
-    T![using] | T![pub] | T![pro] | T![pri] | T![mut] | T![;] => true,
+    T![using] | T![pub] | T![pro] | T![pri] | T![;] => true,
     Ident | T![_] => nth_at_single_colon(p, 1),
     _ => false,
   }

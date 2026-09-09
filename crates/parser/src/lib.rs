@@ -18,4 +18,12 @@ pub fn parse(lexed: &LexedStr<'_>) -> Output {
 }
 
 #[cfg(test)]
+pub fn parse_expr(lexed: &LexedStr<'_>) -> Output {
+  let input = lexed.to_input();
+  let mut parser = Parser::new(input);
+  grammar::expr::expr(&mut parser);
+  parser.finish()
+}
+
+#[cfg(test)]
 mod tests;

@@ -1,12 +1,14 @@
 use crate::{
   Red,
-  ast::{Expr, Item, Node},
+  ast::{Expr, Name, Node, Pattern, Type},
 };
 use parser::T;
 
 define_node_enum! {
   Stmt {
-    Item(Item),
+    Let(LetStmt),
+    ShortLet(ShortLetStmt),
+    Using(UsingStmt),
     Expr(ExprStmt),
     Assign(AssignStmt),
   } no_new
@@ -15,22 +17,46 @@ define_node_enum! {
 impl Stmt {
   pub fn new(red: Red) -> Option<Self> {
     Some(match red.kind() {
+      LetStmt::KIND => Self::Let(LetStmt::new(red)?),
+      ShortLetStmt::KIND => Self::ShortLet(ShortLetStmt::new(red)?),
+      UsingStmt::KIND => Self::Using(UsingStmt::new(red)?),
       ExprStmt::KIND => Self::Expr(ExprStmt::new(red)?),
       AssignStmt::KIND => Self::Assign(AssignStmt::new(red)?),
-      _ => Self::Item(Item::new(red)?),
+      _ => return None,
     })
   }
 }
 
 define_nodes! {
+  LetStmt: _,
+  ShortLetStmt: _,
+  UsingStmt: _,
   ExprStmt: _,
   AssignStmt: _,
 }
 
 define_attr! {
   Stmt,
+  LetStmt,
+  ShortLetStmt,
+  UsingStmt,
   ExprStmt,
   AssignStmt,
+}
+
+impl LetStmt {
+  define_getter! {
+    pat => ! Pattern;
+    ty => Type;
+    init <= Expr;
+  }
+}
+
+impl ShortLetStmt {
+  define_getter! {
+    name => ! Name;
+    init <= ! Expr;
+  }
 }
 
 impl ExprStmt {

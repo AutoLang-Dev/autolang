@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = { { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } };"
-expression: parse(input)
+description: "{ { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } }"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(BlockExpr),
         OpenBrace(1),
         Enter(ExprStmt),
@@ -153,10 +145,6 @@ Output {
         Exit,
         Exit,
         CloseBrace(1),
-        Exit,
-        Semi(1),
-        Exit,
-        Exit,
         Exit,
     ],
     errors: [],

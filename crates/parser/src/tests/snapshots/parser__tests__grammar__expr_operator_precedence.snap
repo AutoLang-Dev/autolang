@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = a + b * c == d && e;"
-expression: parse(input)
+description: a + b * c == d && e;
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(ChainExpr),
         Enter(ChainExpr),
         Enter(BinaryExpr),
@@ -57,10 +49,6 @@ Output {
         Enter(PathSegment),
         Ident(1),
         Exit,
-        Exit,
-        Exit,
-        Exit,
-        Semi(1),
         Exit,
         Exit,
         Exit,

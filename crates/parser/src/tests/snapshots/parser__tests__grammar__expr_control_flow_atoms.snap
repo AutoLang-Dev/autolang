@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = { return a; break 'done b; cont c; };"
-expression: parse(input)
+description: "{ return a; break 'done b; cont c; };"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(BlockExpr),
         OpenBrace(1),
         Enter(ExprStmt),
@@ -56,10 +48,6 @@ Output {
         Semi(1),
         Exit,
         CloseBrace(1),
-        Exit,
-        Semi(1),
-        Exit,
-        Exit,
         Exit,
     ],
     errors: [],

@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = { key: val 111 };"
-expression: parse(input)
+description: "{ key: val 111 }"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(StructExpr),
         OpenBrace(1),
         Enter(FieldValue),
@@ -31,10 +23,6 @@ Output {
         Error(0),
         Int(1),
         CloseBrace(1),
-        Exit,
-        Semi(1),
-        Exit,
-        Exit,
         Exit,
     ],
     errors: [

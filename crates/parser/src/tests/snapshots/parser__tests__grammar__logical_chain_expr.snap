@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "test: = 1 && 2 && 3;"
-expression: parse(input)
+description: 1 && 2 && 3
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(ChainExpr),
         Enter(LiteralExpr),
         Int(1),
@@ -24,10 +16,6 @@ Output {
         AmpAmp(2),
         Enter(LiteralExpr),
         Int(1),
-        Exit,
-        Exit,
-        Semi(1),
-        Exit,
         Exit,
         Exit,
     ],

@@ -480,49 +480,18 @@ fn at_struct_expr(p: &Parser) -> bool {
     return true;
   }
 
-  // 1: Ident | _
-  if !matches!(p.nth(1), Ident | T![_]) {
+  // 1: Ident
+  if !matches!(p.nth(1), Ident) {
     return false;
   }
 
-  // 2: , | }
-  if matches!(p.nth(2), T![,] | T!['}']) {
-    return true;
-  }
-
-  // 2: :
-  if !nth_at_single_colon(p, 2) {
+  // 2: := | ::
+  if p.nth_at(2, T![:=]) || p.nth_at(2, T![::]) {
     return false;
   }
 
-  // 3: kind | =
-  if matches!(p.nth(3), T![=] | T![mod] | T![fn] | T![type] | T![nominal]) {
-    return false;
-  }
-
-  let mut idx = 3;
-  let mut expected_closes = Vec::new();
-  loop {
-    if stmts::assignment_op(p, idx).is_some() {
-      return false;
-    }
-
-    match p.nth(idx) {
-      Eof => return false,
-      T![,] if expected_closes.is_empty() => return true,
-      T!['}'] if expected_closes.is_empty() => return true,
-      T![;] if expected_closes.is_empty() => return false,
-      T!['('] => expected_closes.push(T![')']),
-      T!['['] => expected_closes.push(T![']']),
-      T!['{'] => expected_closes.push(T!['}']),
-      d @ (T![')'] | T![']'] | T!['}']) if expected_closes.pop() != Some(d) => {
-        return false;
-      }
-      _ => (),
-    }
-
-    idx += 1;
-  }
+  // 2: : | ,
+  matches!(p.nth(2), T![:] | T![,] | T!['}'])
 }
 
 fn binary_op(p: &Parser) -> Option<(SyntaxKind, Bp, Bp)> {

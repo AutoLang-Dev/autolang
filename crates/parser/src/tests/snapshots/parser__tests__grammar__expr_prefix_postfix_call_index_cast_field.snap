@@ -1,18 +1,10 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "x: = -foo.bar(1)[i]++ as Int;"
-expression: parse(input)
+description: "-foo.bar(1)[i]++ as Int"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Eq(1),
         Enter(PrefixExpr),
         Minus(1),
         Enter(CastExpr),
@@ -61,10 +53,6 @@ Output {
         Ident(1),
         Exit,
         Exit,
-        Exit,
-        Exit,
-        Exit,
-        Semi(1),
         Exit,
         Exit,
         Exit,

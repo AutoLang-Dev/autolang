@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "F: type = (Int, &mut User) mut -> [*Int; 4]; xs: [Int] = data;"
+description: "F: type = (Int, &mut User) mut -> [*Int; 4];"
 expression: parse(input)
 ---
 Output {
@@ -61,32 +61,6 @@ Output {
         Int(1),
         Exit,
         CloseBrack(1),
-        Exit,
-        Exit,
-        Semi(1),
-        Exit,
-        Enter(BindingItem),
-        Enter(IdentPat),
-        Ident(1),
-        Exit,
-        Colon(1),
-        Enter(SliceType),
-        OpenBrack(1),
-        Enter(PathType),
-        Enter(Path),
-        Enter(PathSegment),
-        Ident(1),
-        Exit,
-        Exit,
-        Exit,
-        CloseBrack(1),
-        Exit,
-        Eq(1),
-        Enter(PathExpr),
-        Enter(Path),
-        Enter(PathSegment),
-        Ident(1),
-        Exit,
         Exit,
         Exit,
         Semi(1),

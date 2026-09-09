@@ -77,6 +77,7 @@ pub enum SyntaxKind {
   ShlEq,
   ShrEq,
   ColonColon,
+  ColonEq,
 
   // Keywords.
   KwAs,
@@ -91,6 +92,7 @@ pub enum SyntaxKind {
   KwImpl,
   KwIn,
   KwIterate,
+  KwLet,
   KwMod,
   KwMut,
   KwNominal,
@@ -123,7 +125,6 @@ pub enum SyntaxKind {
   // Items.
   ModuleInner,
   Module,
-  BindingItem,
   FunctionItem,
   TypeItem,
   ImplItem,
@@ -157,7 +158,10 @@ pub enum SyntaxKind {
   ErrorType,
 
   // Statements.
+  LetStmt,
+  ShortLetStmt,
   ExprStmt,
+  UsingStmt,
   AssignStmt,
 
   // Patterns.
@@ -234,6 +238,7 @@ impl SyntaxKind {
         | Self::KwImpl
         | Self::KwIn
         | Self::KwIterate
+        | Self::KwLet
         | Self::KwMod
         | Self::KwMut
         | Self::KwNominal
@@ -318,6 +323,7 @@ impl SyntaxKind {
         | Self::ShlEq
         | Self::ShrEq
         | Self::ColonColon
+        | Self::ColonEq
     )
   }
 
@@ -375,6 +381,7 @@ impl SyntaxKind {
       Self::ShlEq => "<<=",
       Self::ShrEq => ">>=",
       Self::ColonColon => "::",
+      Self::ColonEq => ":=",
       Self::KwAs => "as",
       Self::KwBreak => "break",
       Self::KwCase => "case",
@@ -387,6 +394,7 @@ impl SyntaxKind {
       Self::KwImpl => "impl",
       Self::KwIn => "in",
       Self::KwIterate => "iterate",
+      Self::KwLet => "let",
       Self::KwMod => "mod",
       Self::KwMut => "mut",
       Self::KwNominal => "nominal",
@@ -421,6 +429,7 @@ impl SyntaxKind {
       "impl" => Self::KwImpl,
       "in" => Self::KwIn,
       "iterate" => Self::KwIterate,
+      "let" => Self::KwLet,
       "mod" => Self::KwMod,
       "mut" => Self::KwMut,
       "nominal" => Self::KwNominal,
@@ -494,6 +503,7 @@ impl SyntaxKind {
       "<<=" => Self::ShlEq,
       ">>=" => Self::ShrEq,
       "::" => Self::ColonColon,
+      ":=" => Self::ColonEq,
       _ => return None,
     };
     Some(kind)
@@ -554,6 +564,7 @@ macro_rules! T {
   [<<=] => { $crate::SyntaxKind::ShlEq };
   [>>=] => { $crate::SyntaxKind::ShrEq };
   [::] => { $crate::SyntaxKind::ColonColon };
+  [:=] => { $crate::SyntaxKind::ColonEq };
 
   [as] => { $crate::SyntaxKind::KwAs };
   [break] => { $crate::SyntaxKind::KwBreak };
@@ -567,6 +578,7 @@ macro_rules! T {
   [impl] => { $crate::SyntaxKind::KwImpl };
   [in] => { $crate::SyntaxKind::KwIn };
   [iterate] => { $crate::SyntaxKind::KwIterate };
+  [let] => { $crate::SyntaxKind::KwLet };
   [mod] => { $crate::SyntaxKind::KwMod };
   [mut] => { $crate::SyntaxKind::KwMut };
   [nominal] => { $crate::SyntaxKind::KwNominal };

@@ -6,7 +6,6 @@ use parser::SyntaxKind;
 
 define_node_enum! {
   Item {
-    Binding(BindingItem),
     Function(FunctionItem),
     Type(TypeItem),
     Using(UsingItem),
@@ -17,7 +16,6 @@ define_node_enum! {
 }
 
 define_nodes! {
-  BindingItem: _,
   FunctionItem: _,
   TypeItem: _,
   UsingItem: _,
@@ -28,21 +26,12 @@ define_nodes! {
 
 define_attr_vis! {
   Item,
-  BindingItem,
   FunctionItem,
   TypeItem,
   UsingItem,
   ModuleItem,
   EmptyItem,
   ErrorItem,
-}
-
-impl BindingItem {
-  define_getter! {
-    pat => ! Pattern;
-    ty => Type;
-    init <= Expr;
-  }
 }
 
 define_nodes! {

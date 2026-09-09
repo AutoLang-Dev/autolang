@@ -5,10 +5,22 @@ pub fn parse(text: &str) -> Output {
   crate::parse(&lexed)
 }
 
+pub fn parse_expr(text: &str) -> Output {
+  let lexed = LexedStr::new(text);
+  crate::parse_expr(&lexed)
+}
+
 macro_rules! parse_snap {
   ($input:literal) => {{
     let input = $input;
     snap!(input, parse(input));
+  }};
+}
+
+macro_rules! parse_expr_snap {
+  ($input:literal) => {{
+    let input = $input;
+    snap!(input, parse_expr(input));
   }};
 }
 
@@ -39,17 +51,17 @@ fn nested_inline_mod() {
 
 #[test]
 fn binding_item() {
-  parse_snap!(r#"x: Int = 42;"#);
+  parse_expr_snap!(r#"{ let x: Int = 42; }"#);
 }
 
 #[test]
 fn binding_without_type() {
-  parse_snap!(r#"x: = 42;"#);
+  parse_expr_snap!(r#"{ x := 42; }"#);
 }
 
 #[test]
 fn binding_patterns() {
-  parse_snap!(r#"_: Int = 0; mut x: Int = 1;"#);
+  parse_expr_snap!(r#"{ let _: Int = 0; let mut x: Int = 1; }"#);
 }
 
 #[test]
@@ -59,88 +71,78 @@ fn function_item() {
 
 #[test]
 fn nested_expr_delimiters() {
-  parse_snap!(r#"x: = ({ a; }, [b, (c)]);"#);
+  parse_expr_snap!(r#"({ a; }, [b, (c)])"#);
 }
 
 #[test]
 fn expr_operator_precedence() {
-  parse_snap!(r#"x: = a + b * c == d && e;"#);
+  parse_expr_snap!(r#"a + b * c == d && e"#);
 }
 
 #[test]
 fn logical_chain_expr() {
-  parse_snap!(r#"test: = 1 && 2 && 3;"#);
+  parse_expr_snap!(r#"1 && 2 && 3"#);
 }
 
 #[test]
 fn comparison_chain_expr() {
-  parse_snap!(r#"x: = a == b < c != d;"#);
+  parse_expr_snap!(r#"a == b < c != d"#);
 }
 
 #[test]
 fn normal_binary_expr_stays_nested() {
-  parse_snap!(r#"x: = a + b + c;"#);
+  parse_expr_snap!(r#"a + b + c"#);
 }
 
 #[test]
 fn expr_prefix_postfix_call_index_cast_field() {
-  parse_snap!(r#"x: = -foo.bar(1)[i]++ as Int;"#);
+  parse_expr_snap!(r#"-foo.bar(1)[i]++ as Int"#);
 }
 
 #[test]
 fn path_call_with_colon_colon_in_block() {
-  parse_snap!(r#"x: = { Response::json(saved); { Response::ok } };"#);
+  parse_expr_snap!(r#"{ Response::json(saved); { Response::ok } }"#);
 }
 
 #[test]
 fn expr_control_flow_atoms() {
-  parse_snap!(r#"x: = { return a; break 'done b; cont c; };"#);
+  parse_expr_snap!(r#"{ return a; break 'done b; cont c; }"#);
 }
 
 #[test]
 fn block_statements_and_tail_expr() {
-  parse_snap!(r#"x: = { y: Int = 1; y += 2; y; y } ;"#);
+  parse_expr_snap!(r#"{ y := 1; y }"#);
 }
 
 #[test]
 fn control_flow_exprs() {
-  parse_snap!(
-    r#"x: = { if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc }; case { a = b, c = d } };"#
+  parse_expr_snap!(
+    r#"{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc }; case { a = b, c = d } }"#
   );
 }
 
 #[test]
 fn remaining_expr_forms() {
-  parse_snap!(
-    r#"x: = { { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } };"#
+  parse_expr_snap!(
+    r#"{ { name, other }; [value; count]; fn(a: Int) -> Int = a; recv.method(arg); 'loop: while cond { break 'loop done } }"#
   );
 }
 
 #[test]
 fn struct_expr_disambiguation() {
-  parse_snap!(
-    r#"x: = { { name: value }; { nested: { other: value } }; { name: (a + b), other: [x; y] } };"#
+  parse_expr_snap!(
+    r#"{ { name: value }; { nested: { other: value } }; { name: (a + b), other: [x; y] } }"#
   );
 }
 
 #[test]
 fn struct_expr_field_recovery_keeps_close_brace() {
-  parse_snap!(r#"x: = { key: val 111 };"#);
-}
-
-#[test]
-fn block_expr_disambiguation() {
-  parse_snap!(r#"x: = { { y: Int; }; { y: Int = 1; }; { y: = 1; }; { y += 1; } };"#);
-}
-
-#[test]
-fn block_stmt_recovery_makes_progress() {
-  parse_snap!(r#"x: = { , };"#);
+  parse_expr_snap!(r#"{ key: val 111 }"#);
 }
 
 #[test]
 fn missing_binding_expr() {
-  parse_snap!(r#"x: = ;"#);
+  parse_expr_snap!(r#"{ x := ; }"#);
 }
 
 #[test]
@@ -160,7 +162,7 @@ fn nominal_type_item() {
 
 #[test]
 fn complex_types() {
-  parse_snap!(r#"F: type = (Int, &mut User) mut -> [*Int; 4]; xs: [Int] = data;"#);
+  parse_snap!(r#"F: type = (Int, &mut User) mut -> [*Int; 4];"#);
 }
 
 #[test]
@@ -186,9 +188,7 @@ fn using_items() {
 
 #[test]
 fn mixed_module_inner() {
-  parse_snap!(
-    r#"foo: mod = { x: Int = 42; add: fn(a: Int) -> Int = a; Point: type = { x: Int }; bar: mod; };"#
-  );
+  parse_snap!(r#"foo: mod = { add: fn(a: Int) -> Int = a; Point: type = { x: Int }; bar: mod; };"#);
 }
 
 #[test]

@@ -1,13 +1,14 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "_: Int = 0; mut x: Int = 1;"
-expression: parse(input)
+description: "{ let _: Int = 0; let mut x: Int = 1; }"
+expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(SourceFile),
-        Enter(ModuleInner),
-        Enter(BindingItem),
+        Enter(BlockExpr),
+        OpenBrace(1),
+        Enter(LetStmt),
+        KwLet(1),
         Enter(WildcardPat),
         Underscore(1),
         Exit,
@@ -25,7 +26,8 @@ Output {
         Exit,
         Semi(1),
         Exit,
-        Enter(BindingItem),
+        Enter(LetStmt),
+        KwLet(1),
         Enter(IdentPat),
         KwMut(1),
         Ident(1),
@@ -44,7 +46,7 @@ Output {
         Exit,
         Semi(1),
         Exit,
-        Exit,
+        CloseBrace(1),
         Exit,
     ],
     errors: [],
