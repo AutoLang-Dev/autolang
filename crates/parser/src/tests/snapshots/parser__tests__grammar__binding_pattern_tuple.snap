@@ -1,0 +1,42 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "{ let (x, mut y) = (1, 2); }"
+expression: parse_expr(input)
+---
+Output {
+    steps: [
+        Enter(BlockExpr),
+        OpenBrace(1),
+        Enter(LetStmt),
+        KwLet(1),
+        Enter(TuplePat),
+        OpenParen(1),
+        Enter(IdentPat),
+        Ident(1),
+        Exit,
+        Comma(1),
+        Enter(IdentPat),
+        KwMut(1),
+        Ident(1),
+        Exit,
+        CloseParen(1),
+        Exit,
+        Eq(1),
+        Enter(TupleExpr),
+        OpenParen(1),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        Comma(1),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        CloseParen(1),
+        Exit,
+        Semi(1),
+        Exit,
+        CloseBrace(1),
+        Exit,
+    ],
+    errors: [],
+}

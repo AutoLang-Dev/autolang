@@ -167,6 +167,9 @@ pub enum SyntaxKind {
   // Patterns.
   WildcardPat,
   IdentPat,
+  TuplePat,
+  StructPat,
+  PatField,
   ErrorPat,
 
   // Expressions.

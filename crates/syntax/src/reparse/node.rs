@@ -33,6 +33,8 @@ pub enum Reparser {
   AttrInner,
   BlockExpr,
   BraceExpr,
+  TuplePat,
+  StructPat,
   DelimitedTokenTree,
   IndexArg,
   Module,
@@ -62,6 +64,8 @@ impl Reparser {
       Module => Self::Module,
       ParameterList => Self::ParameterList,
       StructType => Self::StructType,
+      TuplePat => Self::TuplePat,
+      StructPat => Self::StructPat,
       ParenExpr | TupleExpr => Self::TupleOrParenExpr,
       UsingTreeList => Self::UsingTreeList,
       _ => return None,
@@ -96,6 +100,8 @@ impl Reparser {
       Self::StructType => types::struct_type,
       Self::TupleOrParenExpr => expr::tuple_or_paren_expr,
       Self::UsingTreeList => items::using_tree_list,
+      Self::TuplePat => pat::tuple_pat,
+      Self::StructPat => pat::struct_pat,
     };
 
     parse(&mut parser);

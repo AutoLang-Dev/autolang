@@ -65,6 +65,16 @@ fn binding_patterns() {
 }
 
 #[test]
+fn binding_pattern_tuple() {
+  parse_expr_snap!(r#"{ let (x, mut y) = (1, 2); }"#);
+}
+
+#[test]
+fn binding_pattern_struct() {
+  parse_expr_snap!(r#"{ let { x: mut a, y } = { x: 1, y: 2 }; }"#);
+}
+
+#[test]
 fn function_item() {
   parse_snap!(r#"add: fn(a: Int, b: Int) -> Int = a + b;"#);
 }
