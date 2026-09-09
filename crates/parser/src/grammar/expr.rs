@@ -113,12 +113,6 @@ fn expr_lhs(p: &mut Parser) -> CompletedMarker {
     T![return] => return_expr(p),
     T![break] => break_expr(p),
     T![cont] => cont_expr(p),
-    _ => expr_atom(p),
-  }
-}
-
-fn expr_atom(p: &mut Parser) -> CompletedMarker {
-  match p.current() {
     T![_] => wildcard_expr(p),
     Int | Char | Byte | String | RawString | T![true] | T![false] => literal_expr(p),
     Ident | T![self] | T![super] | T![unit] => path_expr(p),
