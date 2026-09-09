@@ -12,9 +12,12 @@ use crate::server::{
   semantic_tokens::{semantic_tokens, tokens_legend},
 };
 use async_inc::Database;
-use async_lsp::{ClientSocket, LanguageServer, ResponseError, lsp_types::*, router::Router};
+use async_lsp::{
+  ClientSocket, ErrorCode, LanguageServer, ResponseError, lsp_types::*, router::Router,
+};
 use ide::{FileId, SourceFile};
 use line_index::{LineIndex, TextRange, TextSize, WideEncoding, WideLineCol};
+use locale::tr;
 use std::{collections::HashMap, ops::ControlFlow, pin::Pin};
 use syntax::Indel;
 
@@ -53,6 +56,15 @@ pub struct Server {
 
 type ResponseFuture<T> = Pin<Box<dyn Future<Output = Result<T, ResponseError>> + Send + 'static>>;
 
+fn file_id(server: &Server, uri: &Url) -> Result<FileId, ResponseError> {
+  server.vfs.get(uri).copied().ok_or_else(|| {
+    ResponseError::new(
+      ErrorCode::INVALID_PARAMS,
+      format!("{}: {uri}", tr().lsp_document_not_found()),
+    )
+  })
+}
+
 impl LanguageServer for Server {
   type Error = ResponseError;
   type NotifyResult = ControlFlow<async_lsp::Result<()>>;
@@ -74,7 +86,9 @@ impl LanguageServer for Server {
 
   fn did_change(&mut self, params: DidChangeTextDocumentParams) -> Self::NotifyResult {
     let uri = params.text_document.uri;
-    let id = *self.vfs.get(&uri).unwrap();
+    let Some(&id) = self.vfs.get(&uri) else {
+      return ControlFlow::Continue(());
+    };
     let mut file = (*self.db.snapshot().get(id)).clone();
 
     let mut traces = vec![];
@@ -126,11 +140,11 @@ impl LanguageServer for Server {
     &mut self,
     params: SemanticTokensParams,
   ) -> ResponseFuture<Option<SemanticTokensResult>> {
-    let id = *self.vfs.get(&params.text_document.uri).unwrap();
+    let id = file_id(self, &params.text_document.uri);
     let ctx = self.db.query_ctx();
     Box::pin(async move {
       Ok(Some(SemanticTokensResult::Tokens(
-        semantic_tokens(ctx, id).await,
+        semantic_tokens(ctx, id?).await,
       )))
     })
   }
@@ -139,11 +153,11 @@ impl LanguageServer for Server {
     &mut self,
     params: DocumentSymbolParams,
   ) -> ResponseFuture<Option<DocumentSymbolResponse>> {
-    let id = *self.vfs.get(&params.text_document.uri).unwrap();
+    let id = file_id(self, &params.text_document.uri);
     let ctx = self.db.query_ctx();
     Box::pin(async move {
       Ok(Some(DocumentSymbolResponse::Nested(
-        document_symbols(ctx, id).await,
+        document_symbols(ctx, id?).await,
       )))
     })
   }
@@ -152,7 +166,7 @@ impl LanguageServer for Server {
     &mut self,
     params: DocumentDiagnosticParams,
   ) -> ResponseFuture<DocumentDiagnosticReportResult> {
-    let id = *self.vfs.get(&params.text_document.uri).unwrap();
+    let id = file_id(self, &params.text_document.uri);
     let ctx = self.db.query_ctx();
     Box::pin(async move {
       Ok(DocumentDiagnosticReportResult::Report(
@@ -160,7 +174,7 @@ impl LanguageServer for Server {
           related_documents: None,
           full_document_diagnostic_report: FullDocumentDiagnosticReport {
             result_id: None,
-            items: document_diagnostics(ctx, id).await,
+            items: document_diagnostics(ctx, id?).await,
           },
         }),
       ))
@@ -177,9 +191,9 @@ impl Server {
     });
 
     router.request::<SyntaxTreeRequest, _>(|server, params| {
-      let id = *server.vfs.get(&params.text_document.uri).unwrap();
       let ctx = server.db.query_ctx();
-      async move { Ok(syntax_tree(ctx, id).await) }
+      let id = file_id(server, &params.text_document.uri);
+      async move { Ok(syntax_tree(ctx, id?).await) }
     });
 
     router
