@@ -5,7 +5,7 @@ expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(StructExpr),
+        Enter(RecordExpr),
         OpenBrace(1),
         Enter(FieldValue),
         Enter(FieldName),

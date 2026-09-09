@@ -8,7 +8,7 @@ Output {
         Enter(BlockExpr),
         OpenBrace(1),
         Enter(ExprStmt),
-        Enter(StructExpr),
+        Enter(RecordExpr),
         OpenBrace(1),
         Enter(FieldValue),
         Enter(FieldName),

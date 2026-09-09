@@ -7,7 +7,7 @@ define_node_enum! {
     Paren(ParenExpr),
     Array(ArrayExpr),
     Repeat(RepeatExpr),
-    Struct(StructExpr),
+    Record(RecordExpr),
     Block(BlockExpr),
     Literal(LiteralExpr),
     Path(PathExpr),
@@ -41,7 +41,7 @@ define_nodes! {
   ParenExpr: _,
   ArrayExpr: _,
   RepeatExpr: _,
-  StructExpr: _,
+  RecordExpr: _,
   BlockExpr: _,
   LiteralExpr: _,
   PathExpr: _,
@@ -105,7 +105,7 @@ impl FieldValue {
   }
 }
 
-impl StructExpr {
+impl RecordExpr {
   define_getter! {
     fields => [FieldValue];
   }

@@ -67,7 +67,7 @@ fn function_symbol(src: &str, f: FunctionItem) -> DocumentSymbol {
 }
 
 fn type_symbol(src: &str, t: TypeItem) -> DocumentSymbol {
-  let children = if let Type::Struct(s) = t.ty() {
+  let children = if let Type::Record(s) = t.ty() {
     Some(field_symbols(src, s))
   } else {
     None
@@ -76,7 +76,7 @@ fn type_symbol(src: &str, t: TypeItem) -> DocumentSymbol {
   symbol!(src, t, SymbolKind::Type, children)
 }
 
-fn field_symbols(src: &str, s: StructType) -> Vec<DocumentSymbol> {
+fn field_symbols(src: &str, s: RecordType) -> Vec<DocumentSymbol> {
   s.fields()
     .iter()
     .map(|x| symbol!(src, x, SymbolKind::Field))

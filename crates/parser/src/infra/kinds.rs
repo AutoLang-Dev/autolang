@@ -139,7 +139,7 @@ pub enum SyntaxKind {
   ParameterList,
   Parameter,
   TupleField,
-  StructField,
+  TypeField,
   FieldName,
   FieldValue,
 
@@ -153,7 +153,7 @@ pub enum SyntaxKind {
   TupleType,
   ArrayType,
   SliceType,
-  StructType,
+  RecordType,
   ErrorType,
 
   // Statements.
@@ -167,7 +167,7 @@ pub enum SyntaxKind {
   WildcardPat,
   IdentPat,
   TuplePat,
-  StructPat,
+  RecordPat,
   PatField,
   ErrorPat,
 
@@ -177,7 +177,7 @@ pub enum SyntaxKind {
   ParenExpr,
   ArrayExpr,
   RepeatExpr,
-  StructExpr,
+  RecordExpr,
   BlockExpr,
   LiteralExpr,
   PathExpr,

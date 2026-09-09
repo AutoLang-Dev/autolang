@@ -139,14 +139,14 @@ fn remaining_expr_forms() {
 }
 
 #[test]
-fn struct_expr_disambiguation() {
+fn record_expr_disambiguation() {
   parse_expr_snap!(
     r#"{ { name: value }; { nested: { other: value } }; { name: (a + b), other: [x; y] } }"#
   );
 }
 
 #[test]
-fn struct_expr_field_recovery_keeps_close_brace() {
+fn record_expr_field_recovery_keeps_close_brace() {
   parse_expr_snap!(r#"{ key: val 111 }"#);
 }
 

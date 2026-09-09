@@ -8,7 +8,7 @@ pub fn type_(p: &mut Parser) -> CompletedMarker {
     T![*] => ptr_type(p),
     T!['('] => tuple_type(p),
     T!['['] => array_or_slice_type(p),
-    T!['{'] => struct_type(p),
+    T!['{'] => record_type(p),
     _ => error_type(p),
   }
 }
@@ -90,29 +90,31 @@ pub fn array_or_slice_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, kind)
 }
 
-pub fn struct_type(p: &mut Parser) -> CompletedMarker {
+pub fn record_type(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['{']);
   while !p.at_eof() && !p.at(T!['}']) {
-    struct_field(p);
+    type_field(p, true);
     if !p.bump_if(T![,]) {
       break;
     }
   }
   p.expect(T!['}']);
 
-  p.complete(m, StructType)
+  p.complete(m, RecordType)
 }
 
-fn struct_field(p: &mut Parser) -> CompletedMarker {
+fn type_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
   attrs::attrs(p);
   attrs::visibility(p);
   field_name(p);
-  p.expect(T![:]);
-  types::type_(p);
-  p.complete(m, StructField)
+  if record || p.at(T![:]) {
+    p.expect(T![:]);
+    types::type_(p);
+  }
+  p.complete(m, TypeField)
 }
 
 pub fn field_name(p: &mut Parser) -> CompletedMarker {

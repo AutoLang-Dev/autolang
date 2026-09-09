@@ -5,7 +5,7 @@ pub fn pattern(p: &mut Parser) -> CompletedMarker {
     T![_] => wildcard_pat(p),
     T![mut] | Ident => ident_pat(p),
     T!['('] => tuple_pat(p),
-    T!['{'] => struct_pat(p),
+    T!['{'] => record_pat(p),
     _ => error_pat(p),
   }
 }
@@ -39,7 +39,7 @@ pub fn tuple_pat(p: &mut Parser) -> CompletedMarker {
   p.complete(m, TuplePat)
 }
 
-pub fn struct_pat(p: &mut Parser) -> CompletedMarker {
+pub fn record_pat(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T!['{']);
 
@@ -52,7 +52,7 @@ pub fn struct_pat(p: &mut Parser) -> CompletedMarker {
   }
 
   p.expect(T!['}']);
-  p.complete(m, StructPat)
+  p.complete(m, RecordPat)
 }
 
 fn pat_field(p: &mut Parser) -> CompletedMarker {

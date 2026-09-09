@@ -12,7 +12,7 @@ define_nodes! {
   WildcardPat: _,
   IdentPat: _,
   TuplePat: _,
-  StructPat: _,
+  RecordPat: _,
   PatField: _,
   ErrorPat: _,
 }
@@ -29,7 +29,7 @@ impl TuplePat {
   }
 }
 
-impl StructPat {
+impl RecordPat {
   define_getter! {
     fields => [PatField];
   }

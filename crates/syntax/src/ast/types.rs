@@ -11,19 +11,19 @@ define_node_enum! {
     Tuple(TupleType),
     Array(ArrayType),
     Slice(SliceType),
-    Struct(StructType),
+    Record(RecordType),
     Error(ErrorType),
   }
 }
 
 define_nodes! {
   TupleField: _,
-  StructField: _,
+  TypeField: _,
 }
 
 define_attr_vis! {
   TupleField,
-  StructField,
+  TypeField,
 }
 
 impl TupleField {
@@ -32,7 +32,7 @@ impl TupleField {
   }
 }
 
-impl StructField {
+impl TypeField {
   pub fn name(&self) -> Name {
     self
       .red
@@ -56,7 +56,7 @@ define_nodes! {
   TupleType: _,
   ArrayType: _,
   SliceType: _,
-  StructType: _,
+  RecordType: _,
   ErrorType: _,
 }
 
@@ -107,8 +107,8 @@ impl SliceType {
   }
 }
 
-impl StructType {
+impl RecordType {
   define_getter! {
-    fields => [StructField];
+    fields => [TypeField];
   }
 }

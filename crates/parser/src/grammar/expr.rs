@@ -221,14 +221,14 @@ pub fn array_expr(p: &mut Parser) -> CompletedMarker {
 }
 
 pub fn brace_expr(p: &mut Parser) -> CompletedMarker {
-  if at_struct_expr(p) {
-    struct_expr(p)
+  if at_record_expr(p) {
+    record_expr(p)
   } else {
     block_expr(p)
   }
 }
 
-pub fn struct_expr(p: &mut Parser) -> CompletedMarker {
+pub fn record_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['{']);
@@ -244,11 +244,11 @@ pub fn struct_expr(p: &mut Parser) -> CompletedMarker {
       expected: T!['}'],
       actual: p.current(),
     });
-    recover_balanced(p, at_struct_field_recovery);
+    recover_balanced(p, at_record_field_recovery);
   }
   p.expect(T!['}']);
 
-  p.complete(m, StructExpr)
+  p.complete(m, RecordExpr)
 }
 
 fn field_value(p: &mut Parser) -> CompletedMarker {
@@ -260,7 +260,7 @@ fn field_value(p: &mut Parser) -> CompletedMarker {
   p.complete(m, FieldValue)
 }
 
-fn at_struct_field_recovery(p: &Parser) -> bool {
+fn at_record_field_recovery(p: &Parser) -> bool {
   p.at(T![,]) || p.at(T!['}'])
 }
 
@@ -462,7 +462,7 @@ fn error_expr(p: &mut Parser) -> CompletedMarker {
   p.complete(m, ErrorExpr)
 }
 
-fn at_struct_expr(p: &Parser) -> bool {
+fn at_record_expr(p: &Parser) -> bool {
   // 0: {
   assert_eq!(p.current(), T!['{']);
 
