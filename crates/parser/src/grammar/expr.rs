@@ -52,6 +52,14 @@ fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker
             p.bump(T![*]);
             PostfixExpr
           }
+          // Call the value on the left of the dot: `a.f.()` is `(a.f)()`, and
+          // `a.f.{ .. }` is `(a.f) { .. }`. Because the dot makes the call
+          // explicit, this also works where a brace call is otherwise
+          // ambiguous with the body block (`if a == f.{ .. } { .. }`).
+          T!['('] | T!['{'] => {
+            arg_list(p);
+            CallExpr
+          }
           // The name after `.` is a single `Name`, never a path: `a.b::c()`
           // is not a method call.
           Ident if matches!(p.nth(1), T!['('] | T!['{']) => {

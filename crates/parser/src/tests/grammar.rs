@@ -144,6 +144,14 @@ fn postfix_deref() {
 }
 
 #[test]
+fn dot_call_applies_the_value_on_the_left() {
+  // `.()` / `.{ .. }` call the value on the left of the dot, so a field that
+  // holds a function is callable without parentheses. The condition case also
+  // pins that `.{` is not mistaken for the body block.
+  parse_expr_snap!(r#"{ f.(); a.f.(); a.(1, 2); a.f.{ x: 1 }; if a == b.{ y: 1 } { c }; }"#);
+}
+
+#[test]
 fn increment_and_decrement_are_rejected() {
   // Mutation is statement level (`i += 1;`); the C style postfix operators are
   // gone. Minus is still two separate tokens, so `a--b` reads as `a - (-b)`.
