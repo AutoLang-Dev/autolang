@@ -36,16 +36,6 @@ fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker
         index_arg(p);
         p.complete(m, IndexExpr)
       }
-      T![+] if p.at(T![++]) => {
-        let m = p.precede(lhs);
-        p.bump(T![++]);
-        p.complete(m, PostfixExpr)
-      }
-      T![-] if p.at(T![--]) => {
-        let m = p.precede(lhs);
-        p.bump(T![--]);
-        p.complete(m, PostfixExpr)
-      }
       T![as] => {
         let m = p.precede(lhs);
         p.bump(T![as]);

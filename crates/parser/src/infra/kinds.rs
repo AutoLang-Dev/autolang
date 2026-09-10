@@ -56,8 +56,6 @@ pub enum SyntaxKind {
   ThinArrow,
   DotDot,
   DotPipe,
-  PlusPlus,
-  MinusMinus,
   PlusEq,
   MinusEq,
   StarEq,
@@ -300,8 +298,6 @@ impl SyntaxKind {
         | Self::ThinArrow
         | Self::DotDot
         | Self::DotPipe
-        | Self::PlusPlus
-        | Self::MinusMinus
         | Self::PlusEq
         | Self::MinusEq
         | Self::StarEq
@@ -358,8 +354,6 @@ impl SyntaxKind {
       Self::ThinArrow => "->",
       Self::DotDot => "..",
       Self::DotPipe => ".|",
-      Self::PlusPlus => "++",
-      Self::MinusMinus => "--",
       Self::PlusEq => "+=",
       Self::MinusEq => "-=",
       Self::StarEq => "*=",
@@ -476,8 +470,6 @@ impl SyntaxKind {
       "->" => Self::ThinArrow,
       ".." => Self::DotDot,
       ".|" => Self::DotPipe,
-      "++" => Self::PlusPlus,
-      "--" => Self::MinusMinus,
       "+=" => Self::PlusEq,
       "-=" => Self::MinusEq,
       "*=" => Self::StarEq,
@@ -537,8 +529,6 @@ macro_rules! T {
   [->] => { $crate::SyntaxKind::ThinArrow };
   [..] => { $crate::SyntaxKind::DotDot };
   [.|] => { $crate::SyntaxKind::DotPipe };
-  [++] => { $crate::SyntaxKind::PlusPlus };
-  [--] => { $crate::SyntaxKind::MinusMinus };
   [+=] => { $crate::SyntaxKind::PlusEq };
   [-=] => { $crate::SyntaxKind::MinusEq };
   [*=] => { $crate::SyntaxKind::StarEq };

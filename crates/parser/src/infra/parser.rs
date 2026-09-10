@@ -111,8 +111,6 @@ impl Parser {
       T![->] => self.at_composite2(n, T![-], T![>]),
       T![..] => self.at_composite2(n, T![.], T![.]),
       T![.|] => self.at_composite2(n, T![.], T![|]),
-      T![++] => self.at_composite2(n, T![+], T![+]),
-      T![--] => self.at_composite2(n, T![-], T![-]),
       T![+=] => self.at_composite2(n, T![+], T![=]),
       T![-=] => self.at_composite2(n, T![-], T![=]),
       T![*=] => self.at_composite2(n, T![*], T![=]),
@@ -216,8 +214,6 @@ fn composite_n_raw_tokens(kind: SyntaxKind) -> u8 {
     T![->]
     | T![..]
     | T![.|]
-    | T![++]
-    | T![--]
     | T![+=]
     | T![-=]
     | T![*=]

@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "-foo.bar(1)[i]++ as Int"
+description: "-foo.bar(1)[i] as Int"
 expression: parse_expr(input)
 ---
 Output {
@@ -8,7 +8,6 @@ Output {
         Enter(PrefixExpr),
         Minus(1),
         Enter(CastExpr),
-        Enter(PostfixExpr),
         Enter(IndexExpr),
         Enter(MethodCallExpr),
         Enter(PathExpr),
@@ -53,8 +52,6 @@ Output {
         Exit,
         CloseBrack(1),
         Exit,
-        Exit,
-        PlusPlus(2),
         Exit,
         KwAs(1),
         Enter(PathType),

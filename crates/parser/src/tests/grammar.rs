@@ -132,8 +132,15 @@ fn normal_binary_expr_stays_nested() {
 }
 
 #[test]
-fn expr_prefix_postfix_call_index_cast_field() {
-  parse_expr_snap!(r#"-foo.bar(1)[i]++ as Int"#);
+fn expr_prefix_call_index_cast_field() {
+  parse_expr_snap!(r#"-foo.bar(1)[i] as Int"#);
+}
+
+#[test]
+fn increment_and_decrement_are_rejected() {
+  // Mutation is statement level (`i += 1;`); the C style postfix operators are
+  // gone. Minus is still two separate tokens, so `a--b` reads as `a - (-b)`.
+  parse_expr_snap!(r#"{ i++; j--; a--b }"#);
 }
 
 #[test]
