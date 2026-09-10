@@ -1,3 +1,5 @@
+mod make;
+
 use crate::{DiagPayload, Green, Indel, Red, ast::Root, build_syntax_tree, reparse};
 use parser::{LexedStr, SyntaxKind, parse};
 use text_size::TextRange;
