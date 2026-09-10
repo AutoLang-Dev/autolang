@@ -70,7 +70,7 @@ define_nodes! {
 
 impl TupleExpr {
   define_getter! {
-    fields => [Expr];
+    fields => [ExprField];
   }
 }
 
@@ -95,10 +95,10 @@ impl RepeatExpr {
 
 define_nodes! {
   FieldName: _,
-  FieldValue: _,
+  ExprField: _,
 }
 
-impl FieldValue {
+impl ExprField {
   define_getter! {
     name => ! FieldName;
     value <= Expr;
@@ -107,7 +107,7 @@ impl FieldValue {
 
 impl RecordExpr {
   define_getter! {
-    fields => [FieldValue];
+    fields => [ExprField];
   }
 }
 

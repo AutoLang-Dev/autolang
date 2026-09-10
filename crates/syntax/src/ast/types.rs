@@ -17,29 +17,20 @@ define_node_enum! {
 }
 
 define_nodes! {
-  TupleField: _,
   TypeField: _,
 }
 
 define_attr_vis! {
-  TupleField,
   TypeField,
 }
 
-impl TupleField {
-  define_getter! {
-    ty => ! Type;
-  }
-}
-
 impl TypeField {
-  pub fn name(&self) -> Name {
+  pub fn name(&self) -> Option<Name> {
     self
       .red
       .children()
       .find(|child| child.kind() == SyntaxKind::FieldName)
       .and_then(|x| Name::new(x.first_token()))
-      .unwrap()
   }
 
   define_getter! {
@@ -90,7 +81,7 @@ impl PtrType {
 
 impl TupleType {
   define_getter! {
-    fileds => [TupleField];
+    fields => [TypeField];
   }
 }
 

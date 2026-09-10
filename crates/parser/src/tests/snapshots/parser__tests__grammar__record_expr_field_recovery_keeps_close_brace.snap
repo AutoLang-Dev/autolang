@@ -7,7 +7,7 @@ Output {
     steps: [
         Enter(RecordExpr),
         OpenBrace(1),
-        Enter(FieldValue),
+        Enter(ExprField),
         Enter(FieldName),
         Ident(1),
         Exit,

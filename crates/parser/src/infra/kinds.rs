@@ -138,10 +138,9 @@ pub enum SyntaxKind {
   // Parameters, and fields.
   ParameterList,
   Parameter,
-  TupleField,
   TypeField,
   FieldName,
-  FieldValue,
+  ExprField,
 
   // Types.
   TypeKind,

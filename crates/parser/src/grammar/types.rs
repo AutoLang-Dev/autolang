@@ -46,7 +46,7 @@ pub fn tuple_type(p: &mut Parser) -> CompletedMarker {
 
   p.expect(T!['(']);
   while !p.at_eof() && !p.at(T![')']) {
-    tuple_field(p);
+    type_field(p, false);
 
     if !p.bump_if(T![,]) {
       break;
@@ -66,14 +66,6 @@ pub fn tuple_type(p: &mut Parser) -> CompletedMarker {
   } else {
     completed
   }
-}
-
-fn tuple_field(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  attrs::attrs(p);
-  attrs::visibility(p);
-  types::type_(p);
-  p.complete(m, TupleField)
 }
 
 pub fn array_or_slice_type(p: &mut Parser) -> CompletedMarker {
@@ -109,11 +101,11 @@ fn type_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
   attrs::attrs(p);
   attrs::visibility(p);
-  field_name(p);
-  if record || p.at(T![:]) {
+  if record || (p.at(Ident) && p.nth_at(1, T![:])) {
+    field_name(p);
     p.expect(T![:]);
-    types::type_(p);
   }
+  types::type_(p);
   p.complete(m, TypeField)
 }
 

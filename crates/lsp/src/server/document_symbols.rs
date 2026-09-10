@@ -9,7 +9,6 @@ fn map_symbol_kind(kind: SymbolKind) -> LspSymbolKind {
     SymbolKind::Module => LspSymbolKind::MODULE,
     SymbolKind::Type => LspSymbolKind::STRUCT,
     SymbolKind::Function => LspSymbolKind::FUNCTION,
-    SymbolKind::Field => LspSymbolKind::FIELD,
   }
 }
 

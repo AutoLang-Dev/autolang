@@ -151,6 +151,16 @@ fn record_expr_field_recovery_keeps_close_brace() {
 }
 
 #[test]
+fn tuple_expr() {
+  parse_expr_snap!(r#"((), 114514, next: 1919810)"#);
+}
+
+#[test]
+fn tuple_type() {
+  parse_snap!(r#"T: type = (Int, next: Int);"#);
+}
+
+#[test]
 fn missing_binding_expr() {
   parse_expr_snap!(r#"{ x := ; }"#);
 }

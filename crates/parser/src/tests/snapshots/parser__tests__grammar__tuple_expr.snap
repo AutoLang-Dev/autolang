@@ -1,0 +1,36 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "((), 114514, next: 1919810)"
+expression: parse_expr(input)
+---
+Output {
+    steps: [
+        Enter(TupleExpr),
+        OpenParen(1),
+        Enter(ExprField),
+        Enter(TupleExpr),
+        OpenParen(1),
+        CloseParen(1),
+        Exit,
+        Exit,
+        Comma(1),
+        Enter(ExprField),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        Exit,
+        Comma(1),
+        Enter(ExprField),
+        Enter(FieldName),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Enter(LiteralExpr),
+        Int(1),
+        Exit,
+        Exit,
+        CloseParen(1),
+        Exit,
+    ],
+    errors: [],
+}

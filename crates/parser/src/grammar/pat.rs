@@ -28,7 +28,7 @@ pub fn tuple_pat(p: &mut Parser) -> CompletedMarker {
   p.expect(T!['(']);
 
   while !p.at_eof() && !p.at(T![')']) {
-    pattern(p);
+    pat_field(p, false);
 
     if !p.bump_if(T![,]) {
       break;
@@ -44,7 +44,7 @@ pub fn record_pat(p: &mut Parser) -> CompletedMarker {
   p.expect(T!['{']);
 
   while !p.at_eof() && !p.at(T!['}']) {
-    pat_field(p);
+    pat_field(p, true);
 
     if !p.bump_if(T![,]) {
       break;
@@ -55,10 +55,18 @@ pub fn record_pat(p: &mut Parser) -> CompletedMarker {
   p.complete(m, RecordPat)
 }
 
-fn pat_field(p: &mut Parser) -> CompletedMarker {
+fn pat_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
-  expect_name(p);
-  if p.bump_if(T![:]) {
+  if record {
+    expect_name(p);
+    if p.bump_if(T![:]) {
+      pattern(p);
+    }
+  } else {
+    if p.at(Ident) && p.nth_at(1, T![:]) {
+      expect_name(p);
+      p.expect(T![:]);
+    }
     pattern(p);
   }
   p.complete(m, PatField)

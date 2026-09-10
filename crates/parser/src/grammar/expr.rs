@@ -161,29 +161,31 @@ fn path_expr(p: &mut Parser) -> CompletedMarker {
 pub fn tuple_or_paren_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
-  let mut n_exprs = 0;
-  let mut trailing_comma = false;
-
   p.expect(T!['(']);
+  let mut tuple = p.at(Ident) && p.nth_at(1, T![:]) || p.at(T![')']);
+
+  if !tuple {
+    let first = expr(p);
+    if p.at(T![,]) {
+      tuple = true;
+      let m = p.precede(first);
+      p.complete(m, ExprField);
+      p.bump_any();
+    }
+  }
+
   while !p.at_eof() && !p.at(T![')']) {
     if at_expr_end(p) {
       break;
     }
-    expr(p);
-    n_exprs += 1;
-    if p.bump_if(T![,]) {
-      trailing_comma = true;
-    } else {
+    expr_field(p, false);
+    if !p.bump_if(T![,]) {
       break;
     }
   }
   p.expect(T![')']);
 
-  let kind = if n_exprs == 1 && !trailing_comma {
-    ParenExpr
-  } else {
-    TupleExpr
-  };
+  let kind = if tuple { TupleExpr } else { ParenExpr };
   p.complete(m, kind)
 }
 
@@ -233,7 +235,7 @@ pub fn record_expr(p: &mut Parser) -> CompletedMarker {
 
   p.expect(T!['{']);
   while !p.at_eof() && !p.at(T!['}']) {
-    field_value(p);
+    expr_field(p, true);
     if p.bump_if(T![,]) {
       continue;
     }
@@ -251,13 +253,21 @@ pub fn record_expr(p: &mut Parser) -> CompletedMarker {
   p.complete(m, RecordExpr)
 }
 
-fn field_value(p: &mut Parser) -> CompletedMarker {
+fn expr_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
-  types::field_name(p);
-  if p.bump_if(T![:]) {
+  if record {
+    types::field_name(p);
+    if p.bump_if(T![:]) {
+      expr(p);
+    }
+  } else {
+    if p.at(Ident) && p.nth_at(1, T![:]) {
+      types::field_name(p);
+      p.expect(T![:]);
+    }
     expr(p);
   }
-  p.complete(m, FieldValue)
+  p.complete(m, ExprField)
 }
 
 fn at_record_field_recovery(p: &Parser) -> bool {
