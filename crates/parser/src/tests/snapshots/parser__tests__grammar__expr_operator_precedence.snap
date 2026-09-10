@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: a + b * c == d && e;
+description: "a + b * c == d /\\ e"
 expression: parse_expr(input)
 ---
 Output {
@@ -43,7 +43,7 @@ Output {
         Exit,
         Exit,
         Exit,
-        AmpAmp(2),
+        SlashBackslash(2),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),

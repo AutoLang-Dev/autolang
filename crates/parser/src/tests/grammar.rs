@@ -86,12 +86,12 @@ fn nested_expr_delimiters() {
 
 #[test]
 fn expr_operator_precedence() {
-  parse_expr_snap!(r#"a + b * c == d && e"#);
+  parse_expr_snap!(r#"a + b * c == d /\ e"#);
 }
 
 #[test]
 fn logical_chain_expr() {
-  parse_expr_snap!(r#"1 && 2 && 3"#);
+  parse_expr_snap!(r#"1 /\ 2 /\ 3"#);
 }
 
 #[test]

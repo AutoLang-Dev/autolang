@@ -521,8 +521,8 @@ fn binary_op(p: &Parser) -> Option<(SyntaxKind, Bp, Bp)> {
   }
 
   let op = match p.current() {
-    T![|] if p.at(T![||]) => T![||],
-    T![&] if p.at(T![&&]) => T![&&],
+    T!['\\'] if p.at(T!["\\/"]) => T!["\\/"],
+    T![/] if p.at(T!["/\\"]) => T!["/\\"],
     T![=] if p.at(T![==]) => T![==],
     T![!] if p.at(T![!=]) => T![!=],
     T![<] if p.at(T![<=]) => T![<=],
@@ -536,7 +536,7 @@ fn binary_op(p: &Parser) -> Option<(SyntaxKind, Bp, Bp)> {
 
   let p2 = |x| (x, x);
   let bp = match op {
-    T![||] | T![&&] => p2(Bp::Logical),
+    T!["\\/"] | T!["/\\"] => p2(Bp::Logical),
     T![==] | T![!=] | T![<] | T![>] | T![<=] | T![>=] => p2(Bp::Cmp),
     T![<<] | T![>>] => (Bp::ShiftL, Bp::ShiftR),
     T![+] | T![-] => (Bp::AddL, Bp::AddR),
@@ -550,7 +550,7 @@ fn binary_op(p: &Parser) -> Option<(SyntaxKind, Bp, Bp)> {
 
 fn chain_group(op: SyntaxKind) -> Option<ChainGroup> {
   match op {
-    T![||] | T![&&] => Some(ChainGroup::Logical),
+    T!["\\/"] | T!["/\\"] => Some(ChainGroup::Logical),
     T![==] | T![!=] | T![<] | T![>] | T![<=] | T![>=] => Some(ChainGroup::Comparison),
     _ => None,
   }

@@ -71,8 +71,8 @@ pub enum SyntaxKind {
   LtEq,
   Shl,
   Shr,
-  AmpAmp,
-  PipePipe,
+  SlashBackslash,
+  BackslashSlash,
   DotDotDot,
   ShlEq,
   ShrEq,
@@ -316,8 +316,8 @@ impl SyntaxKind {
         | Self::LtEq
         | Self::Shl
         | Self::Shr
-        | Self::AmpAmp
-        | Self::PipePipe
+        | Self::SlashBackslash
+        | Self::BackslashSlash
         | Self::DotDotDot
         | Self::ShlEq
         | Self::ShrEq
@@ -374,8 +374,8 @@ impl SyntaxKind {
       Self::LtEq => "<=",
       Self::Shl => "<<",
       Self::Shr => ">>",
-      Self::AmpAmp => "&&",
-      Self::PipePipe => "||",
+      Self::SlashBackslash => "/\\",
+      Self::BackslashSlash => "\\/",
       Self::DotDotDot => "...",
       Self::ShlEq => "<<=",
       Self::ShrEq => ">>=",
@@ -496,8 +496,8 @@ impl SyntaxKind {
       "<=" => Self::LtEq,
       "<<" => Self::Shl,
       ">>" => Self::Shr,
-      "&&" => Self::AmpAmp,
-      "||" => Self::PipePipe,
+      "/\\" => Self::SlashBackslash,
+      "\\/" => Self::BackslashSlash,
       "..." => Self::DotDotDot,
       "<<=" => Self::ShlEq,
       ">>=" => Self::ShrEq,
@@ -557,8 +557,8 @@ macro_rules! T {
   [<=] => { $crate::SyntaxKind::LtEq };
   [<<] => { $crate::SyntaxKind::Shl };
   [>>] => { $crate::SyntaxKind::Shr };
-  [&&] => { $crate::SyntaxKind::AmpAmp };
-  [||] => { $crate::SyntaxKind::PipePipe };
+  ["/\\"] => { $crate::SyntaxKind::SlashBackslash };
+  ["\\/"] => { $crate::SyntaxKind::BackslashSlash };
   [...] => { $crate::SyntaxKind::DotDotDot };
   [<<=] => { $crate::SyntaxKind::ShlEq };
   [>>=] => { $crate::SyntaxKind::ShrEq };

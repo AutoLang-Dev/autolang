@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: 1 && 2 && 3
+description: "1 /\\ 2 /\\ 3"
 expression: parse_expr(input)
 ---
 Output {
@@ -9,11 +9,11 @@ Output {
         Enter(LiteralExpr),
         Int(1),
         Exit,
-        AmpAmp(2),
+        SlashBackslash(2),
         Enter(LiteralExpr),
         Int(1),
         Exit,
-        AmpAmp(2),
+        SlashBackslash(2),
         Enter(LiteralExpr),
         Int(1),
         Exit,
