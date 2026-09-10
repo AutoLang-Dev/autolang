@@ -92,7 +92,7 @@ impl Reparser {
       Self::Module => items::module,
       Self::TupleType => (|p| types::tuple_type(p, false)) as for<'a> fn(&'a mut _) -> _,
       Self::RecordType => (|p| types::record_type(p, false)) as for<'a> fn(&'a mut _) -> _,
-      Self::TupleOrParenExpr => (|p| expr::tuple_or_paren_expr(p, false)) as for<'a> fn(&'a mut _) -> _,
+      Self::TupleOrParenExpr => (|p| expr::paren_expr(p, false)) as for<'a> fn(&'a mut _) -> _,
       Self::UsingTreeList => items::using_tree_list,
       Self::TuplePat => pat::tuple_pat,
       Self::RecordPat => pat::record_pat,

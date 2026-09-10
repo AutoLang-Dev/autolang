@@ -134,7 +134,7 @@ fn expr_lhs(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
     T![_] => wildcard_expr(p),
     Int | Char | Byte | String | RawString | T![true] | T![false] => literal_expr(p),
     Ident | T![self] | T![super] | T![unit] => path_expr(p),
-    T!['('] => tuple_or_paren_expr(p, false),
+    T!['('] => paren_expr(p, false),
     T!['['] => array_expr(p),
     T!['{'] => brace_expr(p),
     T!['\\'] => closure_expr(p),
@@ -176,7 +176,7 @@ fn path_expr(p: &mut Parser) -> CompletedMarker {
   p.complete(m, PathExpr)
 }
 
-pub fn tuple_or_paren_expr(p: &mut Parser, mut tuple: bool) -> CompletedMarker {
+pub fn paren_expr(p: &mut Parser, mut tuple: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['(']);
@@ -461,7 +461,7 @@ pub fn arg_list(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   match p.current() {
-    T!['('] => _ = tuple_or_paren_expr(p, true),
+    T!['('] => _ = paren_expr(p, true),
     T!['{'] => _ = record_expr(p),
     kind => {
       p.error(Error::Expected {
