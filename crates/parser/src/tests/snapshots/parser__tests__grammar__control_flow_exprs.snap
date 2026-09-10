@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc } }"
+description: "{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; for acc := init { cont acc } }"
 expression: parse_expr(input)
 ---
 Output {
@@ -131,13 +131,13 @@ Output {
         Semi(1),
         Exit,
         Enter(IterateExpr),
-        KwIterate(1),
+        KwFor(1),
         Enter(IdentPat),
         Enter(Name),
         Ident(1),
         Exit,
         Exit,
-        Eq(1),
+        ColonEq(2),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),

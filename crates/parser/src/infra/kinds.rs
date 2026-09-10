@@ -89,7 +89,6 @@ pub enum SyntaxKind {
   KwIf,
   KwImpl,
   KwIn,
-  KwIterate,
   KwLet,
   KwMod,
   KwMut,
@@ -236,7 +235,6 @@ impl SyntaxKind {
         | Self::KwIf
         | Self::KwImpl
         | Self::KwIn
-        | Self::KwIterate
         | Self::KwLet
         | Self::KwMod
         | Self::KwMut
@@ -391,7 +389,6 @@ impl SyntaxKind {
       Self::KwIf => "if",
       Self::KwImpl => "impl",
       Self::KwIn => "in",
-      Self::KwIterate => "iterate",
       Self::KwLet => "let",
       Self::KwMod => "mod",
       Self::KwMut => "mut",
@@ -425,7 +422,6 @@ impl SyntaxKind {
       "if" => Self::KwIf,
       "impl" => Self::KwImpl,
       "in" => Self::KwIn,
-      "iterate" => Self::KwIterate,
       "let" => Self::KwLet,
       "mod" => Self::KwMod,
       "mut" => Self::KwMut,
@@ -573,7 +569,6 @@ macro_rules! T {
   [if] => { $crate::SyntaxKind::KwIf };
   [impl] => { $crate::SyntaxKind::KwImpl };
   [in] => { $crate::SyntaxKind::KwIn };
-  [iterate] => { $crate::SyntaxKind::KwIterate };
   [let] => { $crate::SyntaxKind::KwLet };
   [mod] => { $crate::SyntaxKind::KwMod };
   [mut] => { $crate::SyntaxKind::KwMut };

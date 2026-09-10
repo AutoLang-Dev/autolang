@@ -121,7 +121,7 @@ fn must_be_block(node: &Red) -> bool {
     IfExpr => helper!(IfExpr, cond),
     WhileExpr => helper!(WhileExpr, cond),
     ForExpr => helper!(ForExpr, range),
-    IterateExpr => helper!(IterateExpr, cond),
+    IterateExpr => helper!(IterateExpr, init),
     ElseClause => true,
     _ => false,
   }

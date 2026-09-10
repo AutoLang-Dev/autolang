@@ -156,8 +156,8 @@ impl ForExpr {
 impl IterateExpr {
   define_getter! {
     pat => ! Pattern;
-    cond => ! Expr;
-    then => ! BlockExpr;
+    init => ! Expr;
+    body => ! BlockExpr;
   }
 }
 

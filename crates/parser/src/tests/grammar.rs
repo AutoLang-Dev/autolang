@@ -154,7 +154,21 @@ fn block_statements_and_tail_expr() {
 #[test]
 fn control_flow_exprs() {
   parse_expr_snap!(
-    r#"{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc } }"#
+    r#"{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; for acc := init { cont acc } }"#
+  );
+}
+
+#[test]
+fn state_loop_exits_on_its_tail_expr() {
+  // `cont` is what keeps the loop going; falling off the end of the block
+  // leaves it and yields the block's tail expression.
+  parse_expr_snap!(r#"{ for acc := 0 { if acc == 10 { acc } else { cont acc + 1 } } }"#);
+}
+
+#[test]
+fn state_loop_takes_patterns_and_labels() {
+  parse_expr_snap!(
+    r#"{ 'outer: for { i, total } := { i: 0, total: 0 } { for inner := 0 { cont 'outer { i: i + 1, total: total + inner } } } }"#
   );
 }
 
@@ -162,6 +176,12 @@ fn control_flow_exprs() {
 fn case_is_a_regular_name() {
   // `case` is no longer a keyword, so it must lex as a plain identifier.
   parse_snap!(r#"case: mod = { case: mod; };"#);
+}
+
+#[test]
+fn iterate_is_a_regular_name() {
+  // `iterate` stopped being a keyword when the state loop became `for pat := init`.
+  parse_snap!(r#"iterate: mod = { iterate: mod; };"#);
 }
 
 #[test]

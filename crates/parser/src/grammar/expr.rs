@@ -149,7 +149,6 @@ fn expr_lhs(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
     T![if] => if_expr(p),
     T![while] => while_expr(p),
     T![for] => for_expr(p),
-    T![iterate] => iterate_expr(p),
     _ => error_expr(p),
   }
 }
@@ -332,25 +331,28 @@ fn while_expr(p: &mut Parser) -> CompletedMarker {
   p.complete(m, WhileExpr)
 }
 
+/// `for pat in iterable { .. }` walks an iterable, while `for pat := init { .. }`
+/// binds a state and re-enters the block every time the body evaluates a
+/// `cont value`. Falling off the end of the block leaves the loop, and the
+/// block's tail expression becomes the value of the whole expression.
 fn for_expr(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T![for]);
   pat::pattern(p);
-  p.expect(T![in]);
-  expr_no_brace_call(p);
-  block_expr(p);
-  else_clause(p);
-  p.complete(m, ForExpr)
-}
 
-fn iterate_expr(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  p.expect(T![iterate]);
-  pat::pattern(p);
-  p.expect(T![=]);
-  expr_no_brace_call(p);
-  block_expr(p);
-  p.complete(m, IterateExpr)
+  let kind = if p.bump_if(T![in]) {
+    expr_no_brace_call(p);
+    block_expr(p);
+    else_clause(p);
+    ForExpr
+  } else {
+    p.expect(T![:=]);
+    expr_no_brace_call(p);
+    block_expr(p);
+    IterateExpr
+  };
+
+  p.complete(m, kind)
 }
 
 fn else_clause(p: &mut Parser) {
@@ -427,7 +429,6 @@ fn labeled_expr(p: &mut Parser) -> CompletedMarker {
     T!['{'] => block_expr(p),
     T![while] => while_expr(p),
     T![for] => for_expr(p),
-    T![iterate] => iterate_expr(p),
     _ => error_expr(p),
   };
   p.complete(m, LabeledExpr)
