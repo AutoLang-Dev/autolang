@@ -4,6 +4,8 @@ define_node_enum! {
   Pattern {
     Wildcard(WildcardPat),
     Ident(IdentPat),
+    Tuple(TuplePat),
+    Record(RecordPat),
     Error(ErrorPat),
   }
 }
