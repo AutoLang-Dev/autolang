@@ -128,7 +128,6 @@ macro_rules! define_getter {
 mod attrs;
 mod expr;
 mod items;
-mod literals;
 mod pat;
 mod paths;
 mod stmts;
