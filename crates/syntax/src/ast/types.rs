@@ -54,7 +54,7 @@ impl FnType {
   define_getter! {
     mutable => ? KwMut;
     params => ! Type;
-    ret => ! Type;
+    ret <= ! Type;
   }
 }
 
