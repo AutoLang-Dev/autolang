@@ -22,6 +22,7 @@ define_nodes! {
 impl IdentPat {
   define_getter! {
     mutable => ? KwMut;
+    name => ! Name;
   }
 }
 
@@ -39,7 +40,8 @@ impl RecordPat {
 
 impl PatField {
   define_getter! {
-    name => ! Name;
+    // `None` for positional tuple elements, which have no name.
+    name => Name;
     pat <= Pattern;
   }
 }

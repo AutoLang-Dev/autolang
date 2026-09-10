@@ -78,3 +78,32 @@ fn iterate_body_is_not_the_init_block() {
   assert_eq!(&src[expr.init().red().range()], "{1}");
   assert_eq!(&src[expr.body().red().range()], "{2}");
 }
+
+#[test]
+fn positional_pat_field_has_no_name() {
+  let (green, src) = frag! {
+    PatField { IdentPat { Name { Ident("a") } } }
+  }
+  .finish();
+  let field = ast::PatField::new(Red::new_root(green)).expect("PatField");
+
+  assert!(field.name().is_none(), "positional fields carry no name");
+
+  let (green, src_named) = frag! {
+    PatField { Name { Ident("a") } IdentPat { Name { Ident("b") } } }
+  }
+  .finish();
+  let named = ast::PatField::new(Red::new_root(green)).expect("PatField");
+  let name = named.name().expect("named field");
+
+  assert_eq!(&src_named[name.red().range()], "a");
+  assert_ne!(src_named.len(), src.len());
+}
+
+#[test]
+fn ident_pat_exposes_its_name() {
+  let (green, src) = frag! { IdentPat { Name { Ident("x") } } }.finish();
+  let pat = ast::IdentPat::new(Red::new_root(green)).expect("IdentPat");
+
+  assert_eq!(&src[pat.name().red().range()], "x");
+}
