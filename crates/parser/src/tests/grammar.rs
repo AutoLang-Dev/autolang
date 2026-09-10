@@ -152,6 +152,17 @@ fn dot_call_applies_the_value_on_the_left() {
 }
 
 #[test]
+fn place_call_hands_the_subject_a_destination() {
+  // `subject in place;` is a statement without a value. The grammar accepts
+  // any subject -- calls, field accesses, and (once overloading exists)
+  // operators like `a + b` alike. Which subjects can actually be returned
+  // into a place is the semantic layer's business.
+  parse_expr_snap!(
+    r#"{ f() in p; x.f(1) in q; f.() in r; x.f.{ y: 1 } in s; f()() in t; a + b in u; a.b in v; f() in g { x: 1 }; }"#
+  );
+}
+
+#[test]
 fn increment_and_decrement_are_rejected() {
   // Mutation is statement level (`i += 1;`); the C style postfix operators are
   // gone. Minus is still two separate tokens, so `a--b` reads as `a - (-b)`.

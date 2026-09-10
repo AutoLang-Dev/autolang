@@ -160,6 +160,7 @@ pub enum SyntaxKind {
   ExprStmt,
   UsingStmt,
   AssignStmt,
+  PlaceCallStmt,
 
   // Patterns.
   WildcardPat,

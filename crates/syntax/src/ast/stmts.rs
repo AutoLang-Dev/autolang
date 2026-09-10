@@ -11,6 +11,7 @@ define_node_enum! {
     Using(UsingStmt),
     Expr(ExprStmt),
     Assign(AssignStmt),
+    PlaceCall(PlaceCallStmt),
   } no_new
 }
 
@@ -22,6 +23,7 @@ impl Stmt {
       UsingStmt::KIND => Self::Using(UsingStmt::new(red)?),
       ExprStmt::KIND => Self::Expr(ExprStmt::new(red)?),
       AssignStmt::KIND => Self::Assign(AssignStmt::new(red)?),
+      PlaceCallStmt::KIND => Self::PlaceCall(PlaceCallStmt::new(red)?),
       _ => return None,
     })
   }
@@ -33,6 +35,7 @@ define_nodes! {
   UsingStmt: _,
   ExprStmt: _,
   AssignStmt: _,
+  PlaceCallStmt: _,
 }
 
 define_attr! {
@@ -42,6 +45,7 @@ define_attr! {
   UsingStmt,
   ExprStmt,
   AssignStmt,
+  PlaceCallStmt,
 }
 
 impl LetStmt {
@@ -70,6 +74,16 @@ impl AssignStmt {
     lhs => ! Expr;
     op => ! AssignOp;
     rhs <= ! Expr;
+  }
+}
+
+impl PlaceCallStmt {
+  define_getter! {
+    // The expression handed the destination, e.g. `f()` in `f() in p;`.
+    subject => ! Expr;
+    // The destination; semantically a reference or pointer. It is the last
+    // expression, since the subject comes first.
+    place <= ! Expr;
   }
 }
 

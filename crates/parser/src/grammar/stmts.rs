@@ -8,23 +8,40 @@ pub fn stmt(p: &mut Parser) -> CompletedMarker {
     T![let] => let_stmt(p, m),
     Ident if p.nth_at(1, T![:]) && !p.nth_at(1, T![::]) => short_let_stmt(p, m),
     T![using] => using_stmt(p, m),
+    _ => expr_stmt(p, m),
+  }
+}
 
-    _ => {
-      let expr = expr::expr(p);
-      if let Some(op) = assignment_op(p, 0) {
-        p.bump(op);
+/// A statement that starts with an expression. What follows the expression
+/// decides which statement it is.
+fn expr_stmt(p: &mut Parser, m: Marker) -> CompletedMarker {
+  let expr = expr::expr(p);
+
+  let kind = if let Some(op) = assignment_op(p, 0) {
+    p.bump(op);
+    expr::expr(p);
+    AssignStmt
+  } else {
+    match p.current() {
+      // `subject in place;` hands the subject a destination. The grammar takes
+      // any subject: which ones can be returned into a place (calls, overloaded
+      // operators, builtin arithmetic) is the semantic layer's business.
+      T![in] => {
+        p.bump(T![in]);
         expr::expr(p);
-        p.expect(T![;]);
-        p.complete(m, AssignStmt)
-      } else if p.at(T![;]) {
-        p.expect(T![;]);
-        p.complete(m, ExprStmt)
-      } else {
+        PlaceCallStmt
+      }
+      T![;] => ExprStmt,
+      // Not a statement after all; leave the expression to the caller.
+      _ => {
         p.abandon(m);
-        expr
+        return expr;
       }
     }
-  }
+  };
+
+  p.expect(T![;]);
+  p.complete(m, kind)
 }
 
 pub fn assignment_op(p: &Parser, n: usize) -> Option<SyntaxKind> {
