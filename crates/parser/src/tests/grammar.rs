@@ -161,6 +161,13 @@ fn expr_control_flow_atoms() {
 }
 
 #[test]
+fn method_name_is_a_single_name() {
+  // The name after `.` is one `Name`: a path is not a method name, so
+  // `a.b::c()` is rejected. `C::d()` stays a qualified function call.
+  parse_expr_snap!(r#"{ a.b; a.b(); a.b{}; a.b::c(); C::d(); }"#);
+}
+
+#[test]
 fn block_statements_and_tail_expr() {
   parse_expr_snap!(r#"{ y := 1; y }"#);
 }

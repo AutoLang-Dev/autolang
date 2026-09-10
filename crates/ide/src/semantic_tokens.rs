@@ -41,6 +41,7 @@ fn map_name(name: &Red) -> Option<TokenType> {
     S::TypeItem => Type,
     S::FunctionItem => Function,
     S::TypeField | S::ExprField | S::FieldExpr | S::PatField => Field,
+    S::MethodCallExpr => Method,
     S::PathSegment => 'blk: {
       let path = parent.parent()?;
       if path.last_child().unwrap().green() != parent.green() {
@@ -50,7 +51,6 @@ fn map_name(name: &Red) -> Option<TokenType> {
       let parent = path.parent()?;
       match parent.kind() {
         S::AttrItem => Decorator,
-        S::MethodCallExpr => Method,
         S::PathType => Type,
         S::UsingTree => Module,
         S::PathExpr => {

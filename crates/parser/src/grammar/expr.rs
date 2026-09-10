@@ -46,26 +46,33 @@ fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker
         let m = p.precede(lhs);
         p.bump(T![.]);
 
-        let kind = if p.at(T![*]) {
+        let kind = match p.current() {
           // Postfix dereference: `ptr.*` and `ptr . *` are the same tokens.
-          p.bump(T![*]);
-          PostfixExpr
-        } else if matches!(p.nth(1), T!['('] | T!['{'] | T![:]) {
-          paths::path(p);
-          arg_list(p);
-          MethodCallExpr
-        } else {
-          // Tuple elements are fields named after their position: `tup._0`.
-          if p.at(Int) {
+          T![*] => {
+            p.bump(T![*]);
+            PostfixExpr
+          }
+          // The name after `.` is a single `Name`, never a path: `a.b::c()`
+          // is not a method call.
+          Ident if matches!(p.nth(1), T!['('] | T!['{']) => {
+            name(p);
+            arg_list(p);
+            MethodCallExpr
+          }
+          // `tup.0` is gone: a raw integer is rejected, but still consumed so
+          // the tree keeps the shape of a field access.
+          Int => {
             p.error(Error::Expected {
               expected: Ident,
               actual: p.current(),
             });
             p.bump_any();
-          } else {
-            name(p);
+            FieldExpr
           }
-          FieldExpr
+          _ => {
+            name(p);
+            FieldExpr
+          }
         };
 
         p.complete(m, kind)
