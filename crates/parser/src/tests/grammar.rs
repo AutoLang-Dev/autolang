@@ -152,6 +152,13 @@ fn dot_call_applies_the_value_on_the_left() {
 }
 
 #[test]
+fn only_the_tail_expression_drops_its_semicolon() {
+  // An expression statement needs its `;`; only the block's last expression
+  // may drop it. Two expressions in a row are no longer glued silently.
+  parse_expr_snap!(r#"{ a b; f() g() tail }"#);
+}
+
+#[test]
 fn place_call_hands_the_subject_a_destination() {
   // `subject in place;` is a statement without a value. The grammar accepts
   // any subject -- calls, field accesses, and (once overloading exists)

@@ -32,11 +32,14 @@ fn expr_stmt(p: &mut Parser, m: Marker) -> CompletedMarker {
         PlaceCallStmt
       }
       T![;] => ExprStmt,
-      // Not a statement after all; leave the expression to the caller.
-      _ => {
+      // Only a block's tail expression may drop its `;`. Anything else is a
+      // missing `;`, which `expect` below reports; completing the statement
+      // keeps the expression from silently gluing to the next one.
+      T!['}'] | Eof => {
         p.abandon(m);
         return expr;
       }
+      _ => ExprStmt,
     }
   };
 
