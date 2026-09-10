@@ -139,7 +139,8 @@ impl IfExpr {
 impl WhileExpr {
   define_getter! {
     cond => ! Expr;
-    then => ! BlockExpr;
+    // The condition may itself be a block, so the body is the *last* block.
+    then <= ! BlockExpr;
     else_branch <= ElseClause;
   }
 }
@@ -148,7 +149,8 @@ impl ForExpr {
   define_getter! {
     pat => ! Pattern;
     range => ! Expr;
-    then => ! BlockExpr;
+    // The iterable may itself be a block, so the body is the *last* block.
+    then <= ! BlockExpr;
     else_branch <= ElseClause;
   }
 }
@@ -157,7 +159,8 @@ impl IterateExpr {
   define_getter! {
     pat => ! Pattern;
     init => ! Expr;
-    body => ! BlockExpr;
+    // The init expression may itself be a block, so the body is the *last* block.
+    body <= ! BlockExpr;
   }
 }
 
