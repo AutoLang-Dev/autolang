@@ -11,7 +11,6 @@ define_node_enum! {
     Block(BlockExpr),
     Literal(LiteralExpr),
     Path(PathExpr),
-    Case(CaseExpr),
     If(IfExpr),
     While(WhileExpr),
     For(ForExpr),
@@ -45,7 +44,6 @@ define_nodes! {
   BlockExpr: _,
   LiteralExpr: _,
   PathExpr: _,
-  CaseExpr: _,
   IfExpr: _,
   WhileExpr: _,
   ForExpr: _,
@@ -125,8 +123,6 @@ impl PathExpr {
     path => ! Path;
   }
 }
-
-// impl CaseExpr {}
 
 define_nodes! {
   ElseClause: _,

@@ -81,7 +81,6 @@ pub enum SyntaxKind {
   // Keywords.
   KwAs,
   KwBreak,
-  KwCase,
   KwCont,
   KwElse,
   KwFalse,
@@ -183,7 +182,6 @@ pub enum SyntaxKind {
   BlockExpr,
   LiteralExpr,
   PathExpr,
-  CaseExpr,
   IfExpr,
   WhileExpr,
   ForExpr,
@@ -205,8 +203,6 @@ pub enum SyntaxKind {
   LabeledExpr,
   ChainExpr,
   ElseClause,
-  CaseArmList,
-  CaseArm,
   ArgList,
   ErrorExpr,
 
@@ -232,7 +228,6 @@ impl SyntaxKind {
       self,
       Self::KwAs
         | Self::KwBreak
-        | Self::KwCase
         | Self::KwCont
         | Self::KwElse
         | Self::KwFalse
@@ -388,7 +383,6 @@ impl SyntaxKind {
       Self::ColonEq => ":=",
       Self::KwAs => "as",
       Self::KwBreak => "break",
-      Self::KwCase => "case",
       Self::KwCont => "cont",
       Self::KwElse => "else",
       Self::KwFalse => "false",
@@ -423,7 +417,6 @@ impl SyntaxKind {
     let kind = match text {
       "as" => Self::KwAs,
       "break" => Self::KwBreak,
-      "case" => Self::KwCase,
       "cont" => Self::KwCont,
       "else" => Self::KwElse,
       "false" => Self::KwFalse,
@@ -572,7 +565,6 @@ macro_rules! T {
 
   [as] => { $crate::SyntaxKind::KwAs };
   [break] => { $crate::SyntaxKind::KwBreak };
-  [case] => { $crate::SyntaxKind::KwCase };
   [cont] => { $crate::SyntaxKind::KwCont };
   [else] => { $crate::SyntaxKind::KwElse };
   [false] => { $crate::SyntaxKind::KwFalse };

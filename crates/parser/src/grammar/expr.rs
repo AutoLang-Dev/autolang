@@ -146,7 +146,6 @@ fn expr_lhs(p: &mut Parser, brace_call: BraceCall) -> CompletedMarker {
     T!['{'] => brace_expr(p),
     T!['\\'] => closure_expr(p),
     Label => labeled_expr(p),
-    T![case] => case_expr(p),
     T![if] => if_expr(p),
     T![while] => while_expr(p),
     T![for] => for_expr(p),
@@ -313,36 +312,6 @@ pub fn block_expr(p: &mut Parser) -> CompletedMarker {
   p.expect(T!['}']);
 
   p.complete(m, BlockExpr)
-}
-
-fn case_expr(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  p.expect(T![case]);
-
-  p.expect(T!['{']);
-  case_arm_list(p);
-  p.expect(T!['}']);
-
-  p.complete(m, CaseExpr)
-}
-
-pub fn case_arm_list(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  while !p.at_eof() && !p.at(T!['}']) {
-    case_arm(p);
-    if !p.bump_if(T![,]) {
-      break;
-    }
-  }
-  p.complete(m, CaseArmList)
-}
-
-fn case_arm(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  expr(p);
-  p.expect(T![=]);
-  expr(p);
-  p.complete(m, CaseArm)
 }
 
 fn if_expr(p: &mut Parser) -> CompletedMarker {

@@ -154,8 +154,14 @@ fn block_statements_and_tail_expr() {
 #[test]
 fn control_flow_exprs() {
   parse_expr_snap!(
-    r#"{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc }; case { a = b, c = d } }"#
+    r#"{ if ready { run } else { stop }; while cond { step } else { done }; for mut x in xs { x }; iterate acc = init { cont acc } }"#
   );
+}
+
+#[test]
+fn case_is_a_regular_name() {
+  // `case` is no longer a keyword, so it must lex as a plain identifier.
+  parse_snap!(r#"case: mod = { case: mod; };"#);
 }
 
 #[test]
