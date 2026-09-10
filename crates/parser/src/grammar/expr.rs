@@ -46,7 +46,11 @@ fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker
         let m = p.precede(lhs);
         p.bump(T![.]);
 
-        let kind = if matches!(p.nth(1), T!['('] | T!['{'] | T![:]) {
+        let kind = if p.at(T![*]) {
+          // Postfix dereference: `ptr.*` and `ptr . *` are the same tokens.
+          p.bump(T![*]);
+          PostfixExpr
+        } else if matches!(p.nth(1), T!['('] | T!['{'] | T![:]) {
           paths::path(p);
           arg_list(p);
           MethodCallExpr

@@ -137,6 +137,13 @@ fn expr_prefix_call_index_cast_field() {
 }
 
 #[test]
+fn postfix_deref() {
+  // `.*` is the postfix counterpart of the prefix `*`: `p.*` and `p . *` are
+  // the same tokens, while `a * b` stays multiplication.
+  parse_expr_snap!(r#"{ *p; a * b; p.*; p.*.f; p.*.*; q . *; (p.*)(); }"#);
+}
+
+#[test]
 fn increment_and_decrement_are_rejected() {
   // Mutation is statement level (`i += 1;`); the C style postfix operators are
   // gone. Minus is still two separate tokens, so `a--b` reads as `a - (-b)`.
