@@ -21,7 +21,7 @@ Output {
         Exit,
         Comma(1),
         Enter(ExprField),
-        Enter(FieldName),
+        Enter(Name),
         Ident(1),
         Exit,
         Colon(1),

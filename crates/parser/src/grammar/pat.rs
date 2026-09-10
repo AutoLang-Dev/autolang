@@ -19,7 +19,7 @@ fn wildcard_pat(p: &mut Parser) -> CompletedMarker {
 fn ident_pat(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.bump_if(T![mut]);
-  expect_name(p);
+  name(p);
   p.complete(m, IdentPat)
 }
 
@@ -58,13 +58,13 @@ pub fn record_pat(p: &mut Parser) -> CompletedMarker {
 fn pat_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
   if record {
-    expect_name(p);
+    name(p);
     if p.bump_if(T![:]) {
       pattern(p);
     }
   } else {
     if p.at(Ident) && p.nth_at(1, T![:]) {
-      expect_name(p);
+      name(p);
       p.expect(T![:]);
     }
     pattern(p);
@@ -74,7 +74,7 @@ fn pat_field(p: &mut Parser, record: bool) -> CompletedMarker {
 
 fn error_pat(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
-  expect_name(p);
+  name(p);
   if !p.at(T![:]) && !p.at_eof() {
     p.bump_any();
   }

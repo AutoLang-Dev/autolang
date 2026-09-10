@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: a == b < c != d;
+description: a == b < c != d
 expression: parse_expr(input)
 ---
 Output {
@@ -9,7 +9,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
@@ -17,7 +19,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
@@ -25,7 +29,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
@@ -33,7 +39,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,

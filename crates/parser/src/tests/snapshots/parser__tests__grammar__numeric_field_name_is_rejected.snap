@@ -1,0 +1,81 @@
+---
+source: crates/parser/src/tests/grammar.rs
+description: "T: type = { 0: Int };"
+expression: parse(input)
+---
+Output {
+    steps: [
+        Enter(SourceFile),
+        Enter(ModuleInner),
+        Enter(TypeItem),
+        Enter(Name),
+        Ident(1),
+        Exit,
+        Colon(1),
+        Enter(TypeKind),
+        KwType(1),
+        Exit,
+        Eq(1),
+        Enter(RecordType),
+        OpenBrace(1),
+        Enter(TypeField),
+        Enter(Name),
+        Error(0),
+        Exit,
+        Error(1),
+        Enter(ErrorType),
+        Error(2),
+        Int(1),
+        Exit,
+        Exit,
+        Error(3),
+        Exit,
+        Error(4),
+        Exit,
+        Error(5),
+        Colon(1),
+        Error(6),
+        Ident(1),
+        Error(7),
+        CloseBrace(1),
+        Enter(EmptyItem),
+        Semi(1),
+        Exit,
+        Exit,
+        Exit,
+    ],
+    errors: [
+        Expected {
+            expected: Ident,
+            actual: Int,
+        },
+        Expected {
+            expected: Colon,
+            actual: Int,
+        },
+        Expected {
+            expected: Ident,
+            actual: Int,
+        },
+        Expected {
+            expected: CloseBrace,
+            actual: Colon,
+        },
+        Expected {
+            expected: Semi,
+            actual: Colon,
+        },
+        Expected {
+            expected: Ident,
+            actual: Colon,
+        },
+        Expected {
+            expected: Ident,
+            actual: Ident,
+        },
+        Expected {
+            expected: Ident,
+            actual: CloseBrace,
+        },
+    ],
+}

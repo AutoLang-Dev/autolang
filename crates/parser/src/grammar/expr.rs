@@ -61,8 +61,15 @@ fn expr_bp(p: &mut Parser, min_bp: Bp, brace_call: BraceCall) -> CompletedMarker
           arg_list(p);
           MethodCallExpr
         } else {
-          if !p.bump_if(Int) {
-            expect_ident(p);
+          // Tuple elements are fields named after their position: `tup._0`.
+          if p.at(Int) {
+            p.error(Error::Expected {
+              expected: Ident,
+              actual: p.current(),
+            });
+            p.bump_any();
+          } else {
+            name(p);
           }
           FieldExpr
         };
@@ -274,13 +281,13 @@ pub fn record_expr(p: &mut Parser) -> CompletedMarker {
 fn expr_field(p: &mut Parser, record: bool) -> CompletedMarker {
   let m = p.start();
   if record {
-    types::field_name(p);
+    name(p);
     if p.bump_if(T![:]) {
       expr(p);
     }
   } else {
     if p.at(Ident) && p.nth_at(1, T![:]) {
-      types::field_name(p);
+      name(p);
       p.expect(T![:]);
     }
     expr(p);

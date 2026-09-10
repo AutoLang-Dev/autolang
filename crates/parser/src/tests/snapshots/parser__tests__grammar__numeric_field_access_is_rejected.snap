@@ -1,17 +1,11 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "{ key: val 111 }"
+description: tup.0
 expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(RecordExpr),
-        OpenBrace(1),
-        Enter(ExprField),
-        Enter(Name),
-        Ident(1),
-        Exit,
-        Colon(1),
+        Enter(FieldExpr),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
@@ -21,15 +15,14 @@ Output {
         Exit,
         Exit,
         Exit,
-        Exit,
+        Dot(1),
         Error(0),
         Int(1),
-        CloseBrace(1),
         Exit,
     ],
     errors: [
         Expected {
-            expected: CloseBrace,
+            expected: Ident,
             actual: Int,
         },
     ],

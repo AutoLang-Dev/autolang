@@ -32,7 +32,9 @@ fn path_impl(p: &mut Parser, allow_trailing_colon_colon: bool) -> CompletedMarke
 fn path_segment(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   match p.current() {
-    Ident => p.bump_any(),
+    Ident => {
+      name(p);
+    }
     T![self] => p.bump(T![self]),
     T![super] => p.bump(T![super]),
     T![unit] => p.bump(T![unit]),

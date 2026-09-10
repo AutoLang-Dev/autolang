@@ -134,9 +134,15 @@ pub enum SyntaxKind {
   Visibility,
   ErrorItem,
 
+  // Names.
+  ///
+  /// Every identifier that acts as a name (item, binding, field, path
+  /// segment, rename target) is wrapped in exactly one `Name` node.
+  /// `_` is not a name, and neither are keywords.
+  Name,
+
   // Fields.
   TypeField,
-  FieldName,
   ExprField,
 
   // Types.

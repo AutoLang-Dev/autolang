@@ -28,7 +28,7 @@ pub fn item(p: &mut Parser, marker: Option<Marker>) -> CompletedMarker {
     }
     UsingItem => using_item_body(p),
     _ => {
-      expect_ident(p);
+      name(p);
       p.expect(T![:]);
       match kind {
         ModuleItem => module_item_body(p),
@@ -46,7 +46,7 @@ pub fn item(p: &mut Parser, marker: Option<Marker>) -> CompletedMarker {
 fn item_kind_after_prefix(p: &Parser) -> SyntaxKind {
   match p.current() {
     T![using] => UsingItem,
-    Ident | T![_] if nth_at_single_colon(p, 1) => match p.nth(2) {
+    Ident if nth_at_single_colon(p, 1) => match p.nth(2) {
       T![mod] => ModuleItem,
       T!['('] | T!['{'] => FunctionItem,
       T![type] | T![nominal] => TypeItem,
@@ -145,7 +145,7 @@ pub fn using_tree(p: &mut Parser) -> CompletedMarker {
       }
     }
     _ => {
-      expect_ident(p);
+      name(p);
     }
   }
 
@@ -170,7 +170,12 @@ pub fn using_tree_list(p: &mut Parser) -> CompletedMarker {
 fn rename(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T![as]);
-  expect_ident(p);
+  // `as _` introduces the item without binding a name to it.
+  if p.at(T![_]) {
+    p.bump(T![_]);
+  } else {
+    name(p);
+  }
   p.complete(m, Rename)
 }
 

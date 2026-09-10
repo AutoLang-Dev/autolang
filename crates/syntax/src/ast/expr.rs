@@ -94,13 +94,13 @@ impl RepeatExpr {
 }
 
 define_nodes! {
-  FieldName: _,
   ExprField: _,
 }
 
 impl ExprField {
   define_getter! {
-    name => ! FieldName;
+    // `None` for positional tuple elements, which have no name.
+    name => Name;
     value <= Expr;
   }
 }
@@ -245,7 +245,8 @@ impl ContinueExpr {
 impl FieldExpr {
   define_getter! {
     expr => ! Expr;
-    field => ! Name;
+    // `None` when the access is not a name (e.g. the rejected `tup.0`).
+    field => Name;
   }
 }
 

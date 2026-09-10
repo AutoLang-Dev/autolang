@@ -46,36 +46,24 @@ fn module_inner(p: &mut Parser, stop_on_close_brace: bool) -> CompletedMarker {
   p.complete(m, ModuleInner)
 }
 
-fn expect_ident(p: &mut Parser) -> bool {
-  if p.at(Ident) || p.at(T![_]) {
-    p.bump_any();
-    return true;
-  }
-
-  p.error(Error::Expected {
-    expected: Ident,
-    actual: p.current(),
-  });
-  false
-}
-
-fn expect_name(p: &mut Parser) -> bool {
-  if p.at(Ident) {
-    p.bump_any();
-    return true;
-  }
-
-  p.error(Error::Expected {
-    expected: Ident,
-    actual: p.current(),
-  });
-  false
+/// Consumes one identifier into a `Name` node.
+///
+/// This is the only place that produces names: item names, binding names,
+/// field names, path segments and rename targets all go through here.
+///
+/// `_` is deliberately not a name. It only appears as a wildcard pattern, an
+/// infer type, a wildcard expression, or an explicit placeholder written by
+/// the caller (`as _`, `using foo::_`).
+fn name(p: &mut Parser) -> CompletedMarker {
+  let m = p.start();
+  p.expect(Ident);
+  p.complete(m, Name)
 }
 
 fn is_item_start(p: &Parser) -> bool {
   match p.current() {
     T![using] | T![pub] | T![pro] | T![pri] | T![;] => true,
-    Ident | T![_] => nth_at_single_colon(p, 1),
+    Ident => nth_at_single_colon(p, 1),
     _ => false,
   }
 }

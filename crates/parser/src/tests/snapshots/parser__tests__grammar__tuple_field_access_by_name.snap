@@ -1,22 +1,11 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "{ y := 1; y }"
+description: tup._0
 expression: parse_expr(input)
 ---
 Output {
     steps: [
-        Enter(BlockExpr),
-        OpenBrace(1),
-        Enter(ShortLetStmt),
-        Enter(Name),
-        Ident(1),
-        Exit,
-        ColonEq(2),
-        Enter(LiteralExpr),
-        Int(1),
-        Exit,
-        Semi(1),
-        Exit,
+        Enter(FieldExpr),
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
@@ -26,7 +15,10 @@ Output {
         Exit,
         Exit,
         Exit,
-        CloseBrace(1),
+        Dot(1),
+        Enter(Name),
+        Ident(1),
+        Exit,
         Exit,
     ],
     errors: [],

@@ -35,8 +35,35 @@ fn mod_decl() {
 }
 
 #[test]
-fn underscore_mod_decl() {
+fn underscore_mod_decl_is_rejected() {
   parse_snap!(r#"_: mod;"#);
+}
+
+#[test]
+fn names_are_wrapped_in_name_nodes() {
+  // Item names, binding names, field names, path segments and rename targets
+  // are all `Name(Ident)`; `as _` and `foo::_` keep a bare `Underscore`.
+  parse_snap!(r#"using foo as _; using bar::{baz as _, qux}; a: type = self::unit;"#);
+}
+
+#[test]
+fn raw_token_tree_idents_are_not_names() {
+  parse_snap!(r#"#[inner(flag, nested({ raw [tree] }))] foo: mod;"#);
+}
+
+#[test]
+fn tuple_field_access_by_name() {
+  parse_expr_snap!(r#"tup._0"#);
+}
+
+#[test]
+fn numeric_field_access_is_rejected() {
+  parse_expr_snap!(r#"tup.0"#);
+}
+
+#[test]
+fn numeric_field_name_is_rejected() {
+  parse_snap!(r#"T: type = { 0: Int };"#);
 }
 
 #[test]

@@ -26,13 +26,21 @@ use TokenType::*;
 fn map_name(name: &Red) -> Option<TokenType> {
   use SyntaxKind as S;
 
+  // Names live in a `Name` node, so the token's parent is the wrapper and the
+  // wrapper's parent is what decides the role. Error recovery can leave stray
+  // identifiers outside of any `Name`, hence the fallback.
   let parent = name.parent()?;
+  let parent = if parent.kind() == S::Name {
+    parent.parent()?
+  } else {
+    parent
+  };
   let ty = match parent.kind() {
     S::Rename => Module,
     S::ModuleItem => Module,
     S::TypeItem => Type,
     S::FunctionItem => Function,
-    S::FieldName | S::FieldExpr => Field,
+    S::TypeField | S::ExprField | S::FieldExpr | S::PatField => Field,
     S::PathSegment => 'blk: {
       let path = parent.parent()?;
       if path.last_child().unwrap().green() != parent.green() {

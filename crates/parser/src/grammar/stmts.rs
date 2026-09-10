@@ -56,7 +56,8 @@ fn let_stmt(p: &mut Parser, m: Marker) -> CompletedMarker {
 }
 
 fn short_let_stmt(p: &mut Parser, m: Marker) -> CompletedMarker {
-  p.expect(Ident);
+  // The dispatch above only enters here on an identifier.
+  name(p);
   if !p.bump_if(T![:=]) {
     let kind = p.nth(1);
 

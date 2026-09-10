@@ -113,19 +113,11 @@ fn type_field(p: &mut Parser, record: bool) -> CompletedMarker {
   attrs::attrs(p);
   attrs::visibility(p);
   if record || (p.at(Ident) && p.nth_at(1, T![:])) {
-    field_name(p);
+    name(p);
     p.expect(T![:]);
   }
   types::type_(p);
   p.complete(m, TypeField)
-}
-
-pub fn field_name(p: &mut Parser) -> CompletedMarker {
-  let m = p.start();
-  if !p.bump_if(Int) {
-    expect_ident(p);
-  }
-  p.complete(m, FieldName)
 }
 
 pub fn fn_type(p: &mut Parser) -> CompletedMarker {

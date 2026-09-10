@@ -138,7 +138,7 @@ pub use {attrs::*, expr::*, items::*, pat::*, paths::*, stmts::*, types::*};
 
 use {
   crate::{Green, Red},
-  parser::{SyntaxKind, T},
+  parser::SyntaxKind,
 };
 
 define_nodes! {
@@ -165,26 +165,5 @@ fn items_in_file_or_module(outer: &Red) -> Vec<Item> {
 define_nodes! {
   TokenTree: TokenTree,
   DelimitedTokenTree: DelimitedTokenTree,
-}
-
-pub struct Name {
-  red: Red,
-}
-
-impl Name {
-  pub fn new(red: Red) -> Option<Self> {
-    if !matches!(
-      red.kind(),
-      SyntaxKind::Ident | SyntaxKind::Int | SyntaxKind::Error | T![_]
-    ) {
-      return None;
-    }
-    Some(Self { red })
-  }
-}
-
-impl Node for Name {
-  fn red(&self) -> &Red {
-    &self.red
-  }
+  Name: Name,
 }

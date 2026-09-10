@@ -1,5 +1,4 @@
 use crate::ast::{Expr, Name, Path};
-use parser::SyntaxKind;
 
 define_node_enum! {
   Type {
@@ -25,15 +24,9 @@ define_attr_vis! {
 }
 
 impl TypeField {
-  pub fn name(&self) -> Option<Name> {
-    self
-      .red
-      .children()
-      .find(|child| child.kind() == SyntaxKind::FieldName)
-      .and_then(|x| Name::new(x.first_token()))
-  }
-
   define_getter! {
+    // `None` for positional tuple type elements, which have no name.
+    name => Name;
     ty => ! Type;
   }
 }

@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "{ return a; break 'done b; cont c; };"
+description: "{ return a; break 'done b; cont c; }"
 expression: parse_expr(input)
 ---
 Output {
@@ -13,7 +13,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
@@ -27,7 +29,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
@@ -40,7 +44,9 @@ Output {
         Enter(PathExpr),
         Enter(Path),
         Enter(PathSegment),
+        Enter(Name),
         Ident(1),
+        Exit,
         Exit,
         Exit,
         Exit,
