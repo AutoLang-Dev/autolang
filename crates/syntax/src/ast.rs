@@ -142,15 +142,10 @@ use {
 };
 
 define_nodes! {
-  Shebang: Shebang,
   Root: SourceFile,
 }
 
 impl Root {
-  define_getter! {
-    shebang => Shebang;
-  }
-
   pub fn items(&self) -> Vec<Item> {
     items_in_file_or_module(&self.red)
   }

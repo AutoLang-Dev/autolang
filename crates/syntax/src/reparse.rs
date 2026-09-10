@@ -97,5 +97,5 @@ fn has_qoute(text: &str) -> bool {
 }
 
 fn has_comment(text: &str) -> bool {
-  text.find("//").is_some()
+  text.find("//").is_some() || text.find("#!").is_some()
 }

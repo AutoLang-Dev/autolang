@@ -70,7 +70,7 @@ fn map_token(token: &Red) -> Option<TokenType> {
     S::Ident | T![_] => map_name(token).unwrap_or(Ident),
     S::Int => Number,
     S::Char | S::Byte | S::String | S::RawString => String,
-    S::Comment | S::Shebang => Comment,
+    S::Comment => Comment,
     S::Label => Label,
     T![pub] | T![pro] | T![pri] => Modifier,
     s if s.is_keyword() => Keyword,

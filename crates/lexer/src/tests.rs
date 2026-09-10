@@ -31,6 +31,14 @@ fn comment_and_whitespace() {
 }
 
 #[test]
+fn hash_bang_comment() {
+  debug!(
+    r#"#!/usr/bin/env autolang
+x: Int = 1;"#
+  );
+}
+
+#[test]
 fn string_literals() {
   debug!(r#""hello" "world""#);
 }

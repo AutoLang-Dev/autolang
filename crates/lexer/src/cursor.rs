@@ -37,14 +37,6 @@ pub fn is_whitespace(c: char) -> bool {
   )
 }
 
-pub fn strip_shebang(input: &str) -> usize {
-  if !input.starts_with("#!") {
-    return 0;
-  }
-
-  input.lines().next().unwrap().len()
-}
-
 pub struct Cursor<'a> {
   len_remaining: usize,
   chars: Chars<'a>,
@@ -120,6 +112,11 @@ impl<'a> Cursor<'a> {
         }
         _ => Slash,
       },
+
+      '#' if self.first() == '!' => {
+        self.eat_line();
+        Comment
+      }
 
       c if is_whitespace(c) => {
         self.eat_while(is_whitespace);

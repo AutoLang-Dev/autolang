@@ -10,7 +10,6 @@ pub enum SyntaxKind {
   // Trivia.
   Whitespace,
   Comment,
-  Shebang,
 
   // Literals and names.
   Ident,
@@ -219,7 +218,7 @@ pub enum SyntaxKind {
 
 impl SyntaxKind {
   pub fn is_trivia(self) -> bool {
-    matches!(self, Self::Whitespace | Self::Comment | Self::Shebang)
+    matches!(self, Self::Whitespace | Self::Comment)
   }
 
   pub fn is_keyword(self) -> bool {

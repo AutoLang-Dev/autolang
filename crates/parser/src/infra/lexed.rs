@@ -14,16 +14,8 @@ pub struct LexedStr<'a> {
 
 impl<'a> LexedStr<'a> {
   pub fn new(text: &'a str) -> Self {
-    let mut converter = Converter::new(text);
-    let mut offset = 0;
-
-    let shebang_len = lexer::strip_shebang(text);
-    if shebang_len != 0 {
-      converter.push(Shebang, offset);
-      offset += shebang_len;
-    }
-
-    converter.convert(offset)
+    let converter = Converter::new(text);
+    converter.convert(0)
   }
 
   pub fn range_text(&self, range: Range<u32>) -> &'a str {

@@ -4,7 +4,7 @@ description: "#!/usr/bin/env autolang\nfoo"
 expression: steps
 ---
 [
-    Shebang("#!/usr/bin/env autolang"),
+    Comment("#!/usr/bin/env autolang"),
     Whitespace("\n"),
     Ident("foo"),
 ]

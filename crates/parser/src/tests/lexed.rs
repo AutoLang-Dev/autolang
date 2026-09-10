@@ -43,7 +43,7 @@ fn converter_classifies_literals() {
 }
 
 #[test]
-fn converter_keeps_shebang_offset() {
+fn converter_lexes_hash_bang_as_comment() {
   lex_snap!("#!/usr/bin/env autolang\nfoo")
 }
 

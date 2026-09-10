@@ -80,7 +80,7 @@ fn emits_trailing_trivia() {
 }
 
 #[test]
-fn emits_shebang_as_leading_trivia() {
+fn emits_hash_bang_as_leading_trivia() {
   let input = "#!/usr/bin/env autolang\nfoo";
   let lexed = LexedStr::new(input);
   assert_eq!(lexed.text_start(2), input.len() as u32 - "foo".len() as u32);

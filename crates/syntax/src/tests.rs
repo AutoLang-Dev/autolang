@@ -141,6 +141,5 @@ fn root_ast_smoke_test() {
   let tree = parse_red("#!/usr/bin/env autolang\nfoo: mod;");
   let root = Root::new(tree).expect("expected source file root");
 
-  assert!(root.shebang().is_some());
   assert_eq!(root.items().len(), 1);
 }
