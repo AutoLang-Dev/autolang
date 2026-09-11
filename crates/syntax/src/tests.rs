@@ -3,6 +3,7 @@ mod kinds;
 mod make;
 mod positions;
 mod probe;
+mod recovery;
 mod reparse;
 mod tree;
 
