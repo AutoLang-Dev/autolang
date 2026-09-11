@@ -36,7 +36,7 @@ define_attr_vis! {
 
 impl FunctionItem {
   define_getter! {
-    name => ! Name;
+    name => Name;
     ty => FnType;
     body <= Expr;
   }
@@ -71,15 +71,15 @@ impl TypeKind {
 
 impl TypeItem {
   define_getter! {
-    name => ! Name;
-    kind => ! TypeKind;
-    ty <= ! Type;
+    name => Name;
+    kind => TypeKind;
+    ty <= Type;
   }
 }
 
 impl ModuleItem {
   define_getter! {
-    name => ! Name;
+    name => Name;
   }
 
   pub fn items(&self) -> Option<Vec<Item>> {

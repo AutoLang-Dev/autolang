@@ -50,7 +50,7 @@ define_attr! {
 
 impl LetStmt {
   define_getter! {
-    pat => ! Pattern;
+    pat => Pattern;
     ty => Type;
     init <= Expr;
   }
@@ -58,32 +58,32 @@ impl LetStmt {
 
 impl ShortLetStmt {
   define_getter! {
-    name => ! Name;
-    init <= ! Expr;
+    name => Name;
+    init <= Expr;
   }
 }
 
 impl ExprStmt {
   define_getter! {
-    expr => ! Expr;
+    expr => Expr;
   }
 }
 
 impl AssignStmt {
   define_getter! {
-    lhs => ! Expr;
-    op => ! AssignOp;
-    rhs <= ! Expr;
+    lhs => Expr;
+    op => AssignOp;
+    rhs <= Expr;
   }
 }
 
 impl PlaceCallStmt {
   define_getter! {
     // The expression handed the destination, e.g. `f()` in `f() in p;`.
-    subject => ! Expr;
+    subject => Expr;
     // The destination; semantically a reference or pointer. It is the last
     // expression, since the subject comes first.
-    place <= ! Expr;
+    place <= Expr;
   }
 }
 

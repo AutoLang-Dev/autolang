@@ -128,7 +128,10 @@ fn must_be_block(node: &Red) -> bool {
 
   macro_rules! helper {
     ($t:ty, $f:ident) => {
-      <$t>::new(parent).unwrap().$f().green() != node
+      <$t>::new(parent)
+        .unwrap()
+        .$f()
+        .is_none_or(|child| child.green() != node)
     };
   }
 

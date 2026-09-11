@@ -59,7 +59,7 @@ impl Attr {
 
 impl AttrItem {
   define_getter! {
-    attr => ! Path;
+    attr => Path;
     arg => AttrArg;
   }
 }

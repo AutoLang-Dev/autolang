@@ -22,7 +22,7 @@ fn tuple_and_record_patterns_are_reachable() {
   let let_stmt = ast::LetStmt::new(tuple).expect("LetStmt");
 
   assert!(
-    matches!(let_stmt.pat(), ast::Pattern::Tuple(_)),
+    matches!(let_stmt.pat(), Some(ast::Pattern::Tuple(_))),
     "`let (a, b)` must model its tuple pattern"
   );
 

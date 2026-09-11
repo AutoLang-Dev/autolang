@@ -86,8 +86,8 @@ impl ArrayExpr {
 
 impl RepeatExpr {
   define_getter! {
-    value => ! Expr;
-    len <= ! Expr;
+    value => Expr;
+    len <= Expr;
   }
 }
 
@@ -120,7 +120,7 @@ impl BlockExpr {
 
 impl PathExpr {
   define_getter! {
-    path => ! Path;
+    path => Path;
   }
 }
 
@@ -130,37 +130,37 @@ define_nodes! {
 
 impl IfExpr {
   define_getter! {
-    cond => ! Expr;
-    then <= ! BlockExpr;
+    cond => Expr;
+    then <= BlockExpr;
     else_branch <= ElseClause;
   }
 }
 
 impl WhileExpr {
   define_getter! {
-    cond => ! Expr;
+    cond => Expr;
     // The condition may itself be a block, so the body is the *last* block.
-    then <= ! BlockExpr;
+    then <= BlockExpr;
     else_branch <= ElseClause;
   }
 }
 
 impl ForExpr {
   define_getter! {
-    pat => ! Pattern;
-    range => ! Expr;
+    pat => Pattern;
+    range => Expr;
     // The iterable may itself be a block, so the body is the *last* block.
-    then <= ! BlockExpr;
+    then <= BlockExpr;
     else_branch <= ElseClause;
   }
 }
 
 impl IterateExpr {
   define_getter! {
-    pat => ! Pattern;
-    init => ! Expr;
+    pat => Pattern;
+    init => Expr;
     // The init expression may itself be a block, so the body is the *last* block.
-    body <= ! BlockExpr;
+    body <= BlockExpr;
   }
 }
 
@@ -171,7 +171,7 @@ impl IterateExpr {
 impl RefExpr {
   define_getter! {
     mutable => ? KwMut;
-    expr <= ! Expr;
+    expr <= Expr;
   }
 }
 
@@ -179,8 +179,8 @@ impl RefExpr {
 
 impl CastExpr {
   define_getter! {
-    expr => ! Expr;
-    ty <= ! Type;
+    expr => Expr;
+    ty <= Type;
   }
 }
 
@@ -191,27 +191,27 @@ define_nodes! {
 
 impl ArgList {
   define_getter! {
-    args => ! Expr;
+    args => Expr;
   }
 }
 
 impl CallExpr {
   define_getter! {
-    callee => ! Expr;
+    callee => Expr;
     args => ArgList;
   }
 }
 
 impl IndexArg {
   define_getter! {
-    index => ! Expr;
+    index => Expr;
   }
 }
 
 impl IndexExpr {
   define_getter! {
-    expr => ! Expr;
-    index <= ! IndexArg;
+    expr => Expr;
+    index <= IndexArg;
   }
 }
 
@@ -243,7 +243,7 @@ impl ContinueExpr {
 
 impl FieldExpr {
   define_getter! {
-    expr => ! Expr;
+    expr => Expr;
     // `None` when the access is not a name (e.g. the rejected `tup.0`).
     field => Name;
   }
@@ -253,8 +253,8 @@ impl FieldExpr {
 
 impl LabeledExpr {
   define_getter! {
-    label => ! Label;
-    expr <= ! Expr;
+    label => Label;
+    expr <= Expr;
   }
 }
 

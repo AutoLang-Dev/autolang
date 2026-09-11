@@ -22,7 +22,7 @@ pub struct DocumentSymbol {
 macro_rules! symbol {
   ($src:expr, $node:expr, $kind:expr $(, $children:expr)? $(,)?) => {{
     let node = $node.red().range();
-    let name = $node.name().red().range();
+    let name = $node.name().expect("item name").red().range();
 
     DocumentSymbol {
       name: $src[name].to_string(),

@@ -27,7 +27,7 @@ impl TypeField {
   define_getter! {
     // `None` for positional tuple type elements, which have no name.
     name => Name;
-    ty => ! Type;
+    ty => Type;
   }
 }
 
@@ -46,29 +46,29 @@ define_nodes! {
 
 impl PathType {
   define_getter! {
-    path => ! Path;
+    path => Path;
   }
 }
 
 impl FnType {
   define_getter! {
     mutable => ? KwMut;
-    params => ! Type;
-    ret <= ! Type;
+    params => Type;
+    ret <= Type;
   }
 }
 
 impl RefType {
   define_getter! {
     mutable => ? KwMut;
-    pointee => ! Type;
+    pointee => Type;
   }
 }
 
 impl PtrType {
   define_getter! {
     mutable => ? KwMut;
-    pointee => ! Type;
+    pointee => Type;
   }
 }
 
@@ -80,14 +80,14 @@ impl TupleType {
 
 impl ArrayType {
   define_getter! {
-    ty => ! Type;
-    len <= ! Expr;
+    ty => Type;
+    len <= Expr;
   }
 }
 
 impl SliceType {
   define_getter! {
-    ty => ! Type;
+    ty => Type;
   }
 }
 

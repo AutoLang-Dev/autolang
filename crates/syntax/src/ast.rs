@@ -82,15 +82,6 @@ macro_rules! define_node_enum {
 }
 
 macro_rules! define_getter {
-  ($f:ident $dir:tt ! $r:ty; $($rest:tt)*) => {
-    pub fn $f(&self) -> $r {
-      use $crate::ast::Node;
-      define_getter!(@dir $dir self.red().children())
-      .find_map(<$r>::new).unwrap()
-    }
-    define_getter!($($rest)*);
-  };
-
   ($f:ident $dir:tt ? $k:ident; $($rest:tt)*) => {
     pub fn $f(&self) -> bool {
       use $crate::ast::Node;

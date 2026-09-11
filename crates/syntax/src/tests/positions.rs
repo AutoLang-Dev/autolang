@@ -26,8 +26,11 @@ fn fn_type_ret_is_the_return_type() {
 
   let ty = ast::FnType::new(Red::new_root(green)).expect("FnType");
 
-  assert_eq!(&src[ty.params().red().range()], "(next:Int)");
-  assert_eq!(&src[ty.ret().red().range()], "Out");
+  assert_eq!(
+    &src[ty.params().expect("params").red().range()],
+    "(next:Int)"
+  );
+  assert_eq!(&src[ty.ret().expect("ret").red().range()], "Out");
 }
 
 #[test]
@@ -41,8 +44,8 @@ fn while_body_is_not_the_head_block() {
   .finish();
   let expr = ast::WhileExpr::new(Red::new_root(green)).expect("WhileExpr");
 
-  assert_eq!(&src[expr.cond().red().range()], "{1}");
-  assert_eq!(&src[expr.then().red().range()], "{2}");
+  assert_eq!(&src[expr.cond().expect("cond").red().range()], "{1}");
+  assert_eq!(&src[expr.then().expect("then").red().range()], "{2}");
 }
 
 #[test]
@@ -58,8 +61,8 @@ fn for_body_is_not_the_iterable_block() {
   .finish();
   let expr = ast::ForExpr::new(Red::new_root(green)).expect("ForExpr");
 
-  assert_eq!(&src[expr.range().red().range()], "{1}");
-  assert_eq!(&src[expr.then().red().range()], "{2}");
+  assert_eq!(&src[expr.range().expect("range").red().range()], "{1}");
+  assert_eq!(&src[expr.then().expect("then").red().range()], "{2}");
 }
 
 #[test]
@@ -75,8 +78,8 @@ fn iterate_body_is_not_the_init_block() {
   .finish();
   let expr = ast::IterateExpr::new(Red::new_root(green)).expect("IterateExpr");
 
-  assert_eq!(&src[expr.init().red().range()], "{1}");
-  assert_eq!(&src[expr.body().red().range()], "{2}");
+  assert_eq!(&src[expr.init().expect("init").red().range()], "{1}");
+  assert_eq!(&src[expr.body().expect("body").red().range()], "{2}");
 }
 
 #[test]
@@ -105,5 +108,5 @@ fn ident_pat_exposes_its_name() {
   let (green, src) = frag! { IdentPat { Name { Ident("x") } } }.finish();
   let pat = ast::IdentPat::new(Red::new_root(green)).expect("IdentPat");
 
-  assert_eq!(&src[pat.name().red().range()], "x");
+  assert_eq!(&src[pat.name().expect("name").red().range()], "x");
 }

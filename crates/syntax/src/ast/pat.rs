@@ -22,7 +22,7 @@ define_nodes! {
 impl IdentPat {
   define_getter! {
     mutable => ? KwMut;
-    name => ! Name;
+    name => Name;
   }
 }
 
