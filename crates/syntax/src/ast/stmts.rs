@@ -84,8 +84,15 @@ impl PlaceCallStmt {
   }
 }
 
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct AssignOp {
   red: Red,
+}
+
+impl std::fmt::Debug for AssignOp {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "AssignOp@{:?}", self.red.range())
+  }
 }
 
 impl AssignOp {

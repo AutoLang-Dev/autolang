@@ -9,12 +9,19 @@ pub trait Node {
 macro_rules! define_nodes {
   ($($name:ident $(: $kind:tt)?),+ $(,)?) => {
     $(
+      #[derive(Clone, PartialEq, Eq, Hash)]
       pub struct $name {
         red: $crate::Red,
       }
 
       impl $name {
         define_nodes!(@new $name $($kind)?);
+      }
+
+      impl std::fmt::Debug for $name {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+          write!(f, "{}@{:?}", stringify!($name), self.red.range())
+        }
       }
 
       impl $crate::ast::Node for $name {
@@ -55,12 +62,19 @@ macro_rules! define_nodes {
 macro_rules! define_token_nodes {
   ($($name:ident $(: $kind:tt)?),+ $(,)?) => {
     $(
+      #[derive(Clone, PartialEq, Eq, Hash)]
       pub struct $name {
         red: $crate::Red,
       }
 
       impl $name {
         define_token_nodes!(@new $name $($kind)?);
+      }
+
+      impl std::fmt::Debug for $name {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+          write!(f, "{}@{:?}", stringify!($name), self.red.range())
+        }
       }
 
       impl $crate::ast::Node for $name {
@@ -90,6 +104,7 @@ macro_rules! define_token_nodes {
 
 macro_rules! define_node_enum {
   ($name:ident {$($var:ident($inner:ty)),+ $(,)?} $($flag:tt)?) => {
+    #[derive(Clone, PartialEq, Eq, Hash, Debug)]
     pub enum $name {
       $($var($inner),)*
     }
