@@ -1,14 +1,22 @@
 use super::prelude::*;
 
+pub fn nominal_type(p: &mut Parser, nominal: bool) -> CompletedMarker {
+  type_impl(p, nominal)
+}
+
 pub fn type_(p: &mut Parser) -> CompletedMarker {
+  type_impl(p, false)
+}
+
+fn type_impl(p: &mut Parser, nominal: bool) -> CompletedMarker {
   match p.current() {
     T![_] => infer_type(p),
     Ident | T![self] | T![super] | T![unit] => path_type(p),
     T![&] => ref_type(p),
     T![*] => ptr_type(p),
-    T!['('] => tuple_type(p, true),
+    T!['('] => tuple_type(p, true, nominal),
     T!['['] => array_or_slice_type(p),
-    T!['{'] => record_type(p, true),
+    T!['{'] => record_type(p, true, nominal),
     _ => error_type(p),
   }
 }
@@ -41,12 +49,12 @@ fn ptr_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, PtrType)
 }
 
-pub fn tuple_type(p: &mut Parser, allow_fn: bool) -> CompletedMarker {
+pub fn tuple_type(p: &mut Parser, allow_fn: bool, nominal: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['(']);
   while !p.at_eof() && !p.at(T![')']) {
-    type_field(p, false);
+    type_field(p, false, nominal);
 
     if !p.bump_if(T![,]) {
       break;
@@ -82,12 +90,12 @@ pub fn array_or_slice_type(p: &mut Parser) -> CompletedMarker {
   p.complete(m, kind)
 }
 
-pub fn record_type(p: &mut Parser, allow_fn: bool) -> CompletedMarker {
+pub fn record_type(p: &mut Parser, allow_fn: bool, nominal: bool) -> CompletedMarker {
   let m = p.start();
 
   p.expect(T!['{']);
   while !p.at_eof() && !p.at(T!['}']) {
-    type_field(p, true);
+    type_field(p, true, nominal);
     if !p.bump_if(T![,]) {
       break;
     }
@@ -108,10 +116,20 @@ pub fn record_type(p: &mut Parser, allow_fn: bool) -> CompletedMarker {
   }
 }
 
-fn type_field(p: &mut Parser, record: bool) -> CompletedMarker {
+fn type_field(p: &mut Parser, record: bool, nominal: bool) -> CompletedMarker {
   let m = p.start();
   attrs::attrs(p);
-  attrs::visibility(p);
+  if nominal {
+    attrs::visibility(p);
+  } else if let kind = p.current()
+    && matches!(kind, T![pub] | T![pro] | T![pri])
+  {
+    p.error(Error::Expected {
+      expected: Ident,
+      actual: kind,
+    });
+    p.bump_any();
+  }
   if record || (p.at(Ident) && p.nth_at(1, T![:])) {
     name(p);
     p.expect(T![:]);
@@ -124,8 +142,8 @@ pub fn fn_type(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   match p.current() {
-    T!['('] => tuple_type(p, false),
-    T!['{'] => record_type(p, false),
+    T!['('] => tuple_type(p, false, false),
+    T!['{'] => record_type(p, false, false),
     kind => {
       p.error(Error::Expected {
         expected: T!['('],

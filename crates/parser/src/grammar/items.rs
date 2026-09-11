@@ -82,15 +82,12 @@ fn function_item_body(p: &mut Parser) {
 
 fn type_item_body(p: &mut Parser) {
   let kind = p.start();
-  if p.at(T![nominal]) {
-    p.bump(T![nominal]);
-  } else {
-    p.expect(T![type]);
-  }
+  let nominal = p.at(T![nominal]);
+  p.bump_any();
   p.complete(kind, TypeKind);
 
   if p.expect(T![=]) {
-    types::type_(p);
+    types::nominal_type(p, nominal);
   }
 }
 

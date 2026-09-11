@@ -38,14 +38,31 @@ pub enum Reparser {
   DelimitedTokenTree,
   IndexArg,
   Module,
-  TupleType,
-  RecordType,
+  TupleType(bool),
+  RecordType(bool),
   TupleOrParenExpr,
   UsingTreeList,
 }
 
 impl Reparser {
   pub fn new(node: &Red, delete: TextRange) -> Option<Self> {
+    let is_nominal = || {
+      let first = node.prev_token().unwrap().prev_token().unwrap();
+      if first.kind() == KwNominal {
+        return true;
+      }
+      let Some(first) = first.prev_token() else {
+        return false;
+      };
+      if first.kind() == KwNominal {
+        return true;
+      }
+      let Some(first) = first.prev_token() else {
+        return false;
+      };
+      first.kind() == KwNominal
+    };
+
     let reparser = match node.kind() {
       ArgList => Self::ArgList,
       ArrayExpr | RepeatExpr => Self::ArrayExpr,
@@ -56,8 +73,8 @@ impl Reparser {
       DelimitedTokenTree => Self::DelimitedTokenTree,
       IndexArg => Self::IndexArg,
       Module => Self::Module,
-      RecordType => Self::RecordType,
-      TupleType => Self::TupleType,
+      RecordType => Self::RecordType(is_nominal()),
+      TupleType => Self::TupleType(is_nominal()),
       TuplePat => Self::TuplePat,
       RecordPat => Self::RecordPat,
       ParenExpr | TupleExpr => Self::TupleOrParenExpr,
@@ -80,25 +97,24 @@ impl Reparser {
   pub fn parse(self, input: Input) -> Output {
     let mut parser = Parser::new(input);
 
-    let parse = match self {
-      Self::ArgList => expr::arg_list,
-      Self::ArrayExpr => expr::array_expr,
-      Self::ArrayOrSliceType => types::array_or_slice_type,
-      Self::AttrInner => attrs::attr_inner,
-      Self::BlockExpr => expr::block_expr,
-      Self::BraceExpr => expr::brace_expr,
-      Self::DelimitedTokenTree => token_trees::delimited_token_tree,
-      Self::IndexArg => expr::index_arg,
-      Self::Module => items::module,
-      Self::TupleType => (|p| types::tuple_type(p, false)) as for<'a> fn(&'a mut _) -> _,
-      Self::RecordType => (|p| types::record_type(p, false)) as for<'a> fn(&'a mut _) -> _,
-      Self::TupleOrParenExpr => (|p| expr::paren_expr(p, false)) as for<'a> fn(&'a mut _) -> _,
-      Self::UsingTreeList => items::using_tree_list,
-      Self::TuplePat => pat::tuple_pat,
-      Self::RecordPat => pat::record_pat,
+    match self {
+      Self::ArgList => expr::arg_list(&mut parser),
+      Self::ArrayExpr => expr::array_expr(&mut parser),
+      Self::ArrayOrSliceType => types::array_or_slice_type(&mut parser),
+      Self::AttrInner => attrs::attr_inner(&mut parser),
+      Self::BlockExpr => expr::block_expr(&mut parser),
+      Self::BraceExpr => expr::brace_expr(&mut parser),
+      Self::DelimitedTokenTree => token_trees::delimited_token_tree(&mut parser),
+      Self::IndexArg => expr::index_arg(&mut parser),
+      Self::Module => items::module(&mut parser),
+      Self::TupleType(nominal) => types::tuple_type(&mut parser, false, nominal),
+      Self::RecordType(nominal) => types::record_type(&mut parser, false, nominal),
+      Self::TupleOrParenExpr => expr::paren_expr(&mut parser, false),
+      Self::UsingTreeList => items::using_tree_list(&mut parser),
+      Self::TuplePat => pat::tuple_pat(&mut parser),
+      Self::RecordPat => pat::record_pat(&mut parser),
     };
 
-    parse(&mut parser);
     parser.finish()
   }
 }

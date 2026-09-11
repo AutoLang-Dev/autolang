@@ -130,9 +130,8 @@ Output {
         CloseBrack(1),
         Exit,
         Exit,
-        Enter(Visibility),
+        Error(0),
         KwPub(1),
-        Exit,
         Enter(Name),
         Ident(1),
         Exit,
@@ -149,9 +148,8 @@ Output {
         Exit,
         Comma(1),
         Enter(TypeField),
-        Enter(Visibility),
+        Error(1),
         KwPri(1),
-        Exit,
         Enter(Name),
         Ident(1),
         Exit,
@@ -173,5 +171,14 @@ Output {
         Exit,
         Exit,
     ],
-    errors: [],
+    errors: [
+        Expected {
+            expected: Ident,
+            actual: KwPub,
+        },
+        Expected {
+            expected: Ident,
+            actual: KwPri,
+        },
+    ],
 }
