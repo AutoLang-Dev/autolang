@@ -1,8 +1,11 @@
 //! Every union enum covers the kinds it models.
 
 use super::probe::probe_red;
+use crate::Red;
 use crate::SyntaxKind;
 use crate::ast;
+use crate::ast::Node;
+use crate::frag;
 use crate::make::Frag;
 
 #[test]
@@ -135,4 +138,15 @@ fn union_enums_cover_their_kinds() {
       "AttrArg over {kind:?}"
     );
   }
+}
+
+#[test]
+fn token_backed_types_wrap_tokens() {
+  let (green, src) = frag! {
+    LabeledExpr { Label("'l") Colon LiteralExpr { Int("1") } }
+  }
+  .finish();
+  let expr = ast::LabeledExpr::new(Red::new_root(green)).expect("LabeledExpr");
+
+  assert_eq!(&src[expr.label().expect("label").red().range()], "'l");
 }

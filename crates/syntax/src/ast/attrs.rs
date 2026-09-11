@@ -104,7 +104,7 @@ impl Visibility {
   }
 }
 
-define_nodes! {
+define_token_nodes! {
   Pub: KwPub,
   Pro: KwPro,
   Pri: KwPri,

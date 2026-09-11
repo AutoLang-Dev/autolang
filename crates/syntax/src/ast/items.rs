@@ -49,7 +49,7 @@ define_node_enum! {
   } no_new
 }
 
-define_nodes! {
+define_token_nodes! {
   AliasType: KwType,
   NewType: KwNominal,
 }

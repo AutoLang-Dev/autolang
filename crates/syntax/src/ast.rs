@@ -48,6 +48,46 @@ macro_rules! define_nodes {
   };
 }
 
+/// Like [`define_nodes!`], for types that wrap a single token.
+///
+/// These types are found among a node's token children, their `KIND` is a token
+/// kind, and they expose the token text.
+macro_rules! define_token_nodes {
+  ($($name:ident $(: $kind:tt)?),+ $(,)?) => {
+    $(
+      pub struct $name {
+        red: $crate::Red,
+      }
+
+      impl $name {
+        define_token_nodes!(@new $name $($kind)?);
+      }
+
+      impl $crate::ast::Node for $name {
+        fn red(&self) -> &$crate::Red {
+          &self.red
+        }
+      }
+    )*
+  };
+
+  (@new $name:ident $kind:ident) => {
+    pub const KIND: ::parser::SyntaxKind = ::parser::SyntaxKind::$kind;
+
+    pub fn new(red: $crate::Red) -> Option<Self> {
+      if red.kind() == Self::KIND && red.is_token() {
+        Some(Self { red })
+      } else {
+        None
+      }
+    }
+  };
+
+  (@new $name:ident _) => {
+    define_token_nodes!(@new $name $name);
+  };
+}
+
 macro_rules! define_node_enum {
   ($name:ident {$($var:ident($inner:ty)),+ $(,)?} $($flag:tt)?) => {
     pub enum $name {

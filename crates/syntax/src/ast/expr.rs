@@ -218,7 +218,7 @@ impl ReturnExpr {
   }
 }
 
-define_nodes! {
+define_token_nodes! {
   Label: _,
 }
 
