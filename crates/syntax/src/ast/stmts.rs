@@ -52,14 +52,14 @@ impl LetStmt {
   define_getter! {
     pat => Pattern;
     ty => Type;
-    init <= Expr;
+    init => #-1 Expr;
   }
 }
 
 impl ShortLetStmt {
   define_getter! {
     name => Name;
-    init <= Expr;
+    init => #-1 Expr;
   }
 }
 
@@ -73,17 +73,14 @@ impl AssignStmt {
   define_getter! {
     lhs => Expr;
     op => AssignOp;
-    rhs <= Expr;
+    rhs => #-1 Expr;
   }
 }
 
 impl PlaceCallStmt {
   define_getter! {
-    // The expression handed the destination, e.g. `f()` in `f() in p;`.
     subject => Expr;
-    // The destination; semantically a reference or pointer. It is the last
-    // expression, since the subject comes first.
-    place <= Expr;
+    place => #-1 Expr;
   }
 }
 

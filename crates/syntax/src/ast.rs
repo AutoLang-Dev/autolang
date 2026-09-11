@@ -82,37 +82,59 @@ macro_rules! define_node_enum {
 }
 
 macro_rules! define_getter {
-  ($f:ident $dir:tt ? $k:ident; $($rest:tt)*) => {
+  ($f:ident => ? $k:ident; $($rest:tt)*) => {
     pub fn $f(&self) -> bool {
       use $crate::ast::Node;
-      define_getter!(@dir $dir self.red().children())
+      self.red().children()
       .any(|child| child.kind() == parser::SyntaxKind::$k)
     }
     define_getter!($($rest)*);
   };
 
-  ($f:ident $dir:tt [$r:ty]; $($rest:tt)*) => {
+  ($f:ident => [$r:ty]; $($rest:tt)*) => {
     pub fn $f(&self) -> Vec<$r> {
       use $crate::ast::Node;
-      define_getter!(@dir $dir self.red().children())
-      .filter_map(<$r>::new).collect()
+      self.red().children().filter_map(<$r>::new).collect()
     }
     define_getter!($($rest)*);
   };
 
-  ($f:ident $dir:tt $r:ty; $($rest:tt)*) => {
+  ($f:ident => #-$n:literal $r:ty; $($rest:tt)*) => {
     pub fn $f(&self) -> Option<$r> {
       use $crate::ast::Node;
-      define_getter!(@dir $dir self.red().children())
-      .find_map(<$r>::new)
+      $crate::ast::node_child_from_end(self.red(), $n)
+      .and_then(<$r>::new)
     }
     define_getter!($($rest)*);
   };
 
-  (@dir => $e:expr) => { $e };
-  (@dir <= $e:expr) => { $e.rev() };
+  ($f:ident => #$n:literal $r:ty; $($rest:tt)*) => {
+    pub fn $f(&self) -> Option<$r> {
+      use $crate::ast::Node;
+      $crate::ast::node_children(self.red()).nth($n).and_then(<$r>::new)
+    }
+    define_getter!($($rest)*);
+  };
+
+  ($f:ident => $r:ty; $($rest:tt)*) => {
+    pub fn $f(&self) -> Option<$r> {
+      use $crate::ast::Node;
+      self.red().children().find_map(<$r>::new)
+    }
+    define_getter!($($rest)*);
+  };
 
   () => {};
+}
+
+/// Non-token children, in source order.
+pub(crate) fn node_children(red: &Red) -> impl DoubleEndedIterator<Item = Red> + '_ {
+  red.children().filter(|child| !child.is_token())
+}
+
+/// The `n`-th non-token child from the end, one-based (`1` is the last).
+pub(crate) fn node_child_from_end(red: &Red, n: usize) -> Option<Red> {
+  node_children(red).rev().nth(n.checked_sub(1)?)
 }
 
 #[macro_use]

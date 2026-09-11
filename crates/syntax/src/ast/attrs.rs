@@ -9,7 +9,7 @@ macro_rules! define_attr {
     $(
       impl $name {
         define_getter! {
-          attr => $crate::ast::Attr;
+          attr => #0 $crate::ast::Attr;
         }
       }
     )*
@@ -59,7 +59,7 @@ impl Attr {
 
 impl AttrItem {
   define_getter! {
-    attr => Path;
+    attr => #0 Path;
     arg => AttrArg;
   }
 }

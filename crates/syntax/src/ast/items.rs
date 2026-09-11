@@ -38,7 +38,7 @@ impl FunctionItem {
   define_getter! {
     name => Name;
     ty => FnType;
-    body <= Expr;
+    body => #-1 Expr;
   }
 }
 
@@ -73,7 +73,7 @@ impl TypeItem {
   define_getter! {
     name => Name;
     kind => TypeKind;
-    ty <= Type;
+    ty => #-1 Type;
   }
 }
 
