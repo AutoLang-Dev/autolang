@@ -1,6 +1,6 @@
 use crate::{
   Red,
-  ast::{Expr, Name, Node, Pattern, Type},
+  ast::{Expr, Name, Node, Pattern, Type, UsingTree},
 };
 use parser::T;
 
@@ -46,6 +46,12 @@ define_attr! {
   ExprStmt,
   AssignStmt,
   PlaceCallStmt,
+}
+
+impl UsingStmt {
+  define_getter! {
+    tree => #-1 UsingTree;
+  }
 }
 
 impl LetStmt {

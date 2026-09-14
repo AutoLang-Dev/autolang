@@ -190,7 +190,7 @@ fn item_body_follows_its_attributes() {
   .finish();
   let item = ast::FunctionItem::new(Red::new_root(green)).expect("FunctionItem");
 
-  assert_eq!(&src[item.attr().expect("attr").red().range()], "#[a]");
+  assert_eq!(&src[item.attrs()[0].red().range()], "#[a]");
   assert_eq!(&src[item.body().expect("body").red().range()], "body");
 }
 
@@ -211,7 +211,7 @@ fn attributes_do_not_shift_statement_operands() {
     panic!("expected an assign statement");
   };
 
-  assert_eq!(&src[stmt.attr().expect("attr").red().range()], "#[a]");
+  assert_eq!(&src[stmt.attrs()[0].red().range()], "#[a]");
   assert_eq!(&src[stmt.lhs().expect("lhs").red().range()], "x");
   assert_eq!(&src[stmt.rhs().expect("rhs").red().range()], "1");
 }

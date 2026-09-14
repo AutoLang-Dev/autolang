@@ -9,7 +9,7 @@ macro_rules! define_attr {
     $(
       impl $name {
         define_getter! {
-          attr => #0 $crate::ast::Attr;
+          attrs => [$crate::ast::Attr];
         }
       }
     )*
@@ -73,9 +73,14 @@ define_node_enum! {
 
 impl AttrArg {
   pub fn new(red: Red) -> Option<Self> {
-    Some(match red.kind() {
-      DelimitedTokenTree::KIND => Self::Tree(DelimitedTokenTree::new(red)?),
-      _ => Self::Expr(Expr::new(red)?),
+    if red.kind() != SyntaxKind::AttrArg {
+      return None;
+    }
+
+    let inner = red.children().find(|child| !child.is_token())?;
+    Some(match inner.kind() {
+      DelimitedTokenTree::KIND => Self::Tree(DelimitedTokenTree::new(inner)?),
+      _ => Self::Expr(Expr::new(inner)?),
     })
   }
 }

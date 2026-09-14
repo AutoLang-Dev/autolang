@@ -1,6 +1,6 @@
 use crate::{
   Red,
-  ast::{Expr, FnType, Name, Type, items_in_file_or_module},
+  ast::{Expr, FnType, Name, Type, UsingTree, UsingUnitName, items_in_file_or_module},
 };
 use parser::SyntaxKind;
 
@@ -74,6 +74,13 @@ impl TypeItem {
     name => Name;
     kind => TypeKind;
     ty => #-1 Type;
+  }
+}
+
+impl UsingItem {
+  define_getter! {
+    unit => UsingUnitName;
+    tree => #-1 UsingTree;
   }
 }
 

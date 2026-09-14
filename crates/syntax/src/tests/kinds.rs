@@ -76,8 +76,6 @@ fn union_enums_cover_their_kinds() {
     SyntaxKind::RecordPat,
     SyntaxKind::ErrorPat,
   ];
-  let using_kinds = [SyntaxKind::UsingTree, SyntaxKind::UsingTreeList];
-
   for kind in expr_kinds {
     assert!(ast::Expr::new(probe_red(kind)).is_some(), "Expr::{kind:?}");
   }
@@ -101,13 +99,6 @@ fn union_enums_cover_their_kinds() {
     );
   }
 
-  for kind in using_kinds {
-    assert!(
-      ast::Using::new(probe_red(kind)).is_some(),
-      "Using::{kind:?}"
-    );
-  }
-
   for kind in [
     SyntaxKind::KwType,
     SyntaxKind::KwNominal,
@@ -128,16 +119,25 @@ fn union_enums_cover_their_kinds() {
     );
   }
 
-  for kind in [
-    SyntaxKind::LiteralExpr,
-    SyntaxKind::PathExpr,
-    SyntaxKind::DelimitedTokenTree,
-  ] {
-    assert!(
-      ast::AttrArg::new(probe_red(kind)).is_some(),
-      "AttrArg over {kind:?}"
-    );
+  assert!(
+    ast::AttrArg::new(frag! { AttrArg {} }.red()).is_none(),
+    "an empty AttrArg carries no value"
+  );
+
+  let expr_arg = frag! { AttrArg { LiteralExpr { Int("1") } } }.red();
+  assert!(matches!(
+    ast::AttrArg::new(expr_arg),
+    Some(ast::AttrArg::Expr(_))
+  ));
+
+  let tree_arg = frag! {
+    AttrArg { DelimitedTokenTree { OpenParen CloseParen } }
   }
+  .red();
+  assert!(matches!(
+    ast::AttrArg::new(tree_arg),
+    Some(ast::AttrArg::Tree(_))
+  ));
 }
 
 #[test]

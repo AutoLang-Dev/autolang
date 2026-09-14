@@ -187,6 +187,13 @@ pub(crate) fn node_children(red: &Red) -> impl DoubleEndedIterator<Item = Red> +
   red.children().filter(|child| !child.is_token())
 }
 
+/// The node's own non-trivia tokens, in source order.
+pub(crate) fn child_tokens(red: &Red) -> impl DoubleEndedIterator<Item = Red> + '_ {
+  red
+    .children()
+    .filter(|child| child.is_token() && !child.kind().is_trivia())
+}
+
 /// The `n`-th non-token child from the end, one-based (`1` is the last).
 pub(crate) fn node_child_from_end(red: &Red, n: usize) -> Option<Red> {
   node_children(red).rev().nth(n.checked_sub(1)?)
@@ -233,4 +240,27 @@ define_nodes! {
   TokenTree: TokenTree,
   DelimitedTokenTree: DelimitedTokenTree,
   Name: Name,
+}
+
+impl TokenTree {
+  /// The single token this leaf wraps.
+  pub fn token(&self) -> Option<Red> {
+    child_tokens(&self.red).next()
+  }
+}
+
+impl DelimitedTokenTree {
+  /// The opening delimiter: `(`, `[` or `{`.
+  pub fn delimiter(&self) -> Option<SyntaxKind> {
+    child_tokens(&self.red).next().map(|token| token.kind())
+  }
+
+  /// The trees between the delimiters: leaf and delimited token trees.
+  pub fn trees(&self) -> Vec<Red> {
+    self
+      .red
+      .children()
+      .filter(|child| !child.is_token())
+      .collect()
+  }
 }

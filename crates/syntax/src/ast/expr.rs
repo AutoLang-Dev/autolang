@@ -1,4 +1,7 @@
-use crate::ast::{Name, Path, Pattern, Stmt, Type};
+use crate::{
+  Red,
+  ast::{Name, Path, Pattern, Stmt, Type, child_tokens},
+};
 
 define_node_enum! {
   Expr {
@@ -116,8 +119,6 @@ impl BlockExpr {
   }
 }
 
-// impl LiteralExpr {}
-
 impl PathExpr {
   define_getter! {
     path => #0 Path;
@@ -126,6 +127,12 @@ impl PathExpr {
 
 define_nodes! {
   ElseClause: _,
+}
+
+impl ElseClause {
+  define_getter! {
+    block => #0 BlockExpr;
+  }
 }
 
 impl IfExpr {
@@ -161,9 +168,28 @@ impl IterateExpr {
   }
 }
 
-// impl BinaryExpr {}
+impl BinaryExpr {
+  define_getter! {
+    lhs => #0 Expr;
+    rhs => #-1 Expr;
+  }
 
-// impl PrefixExpr {}
+  /// The operator token between the operands.
+  pub fn op_token(&self) -> Option<Red> {
+    child_tokens(&self.red).next()
+  }
+}
+
+impl PrefixExpr {
+  define_getter! {
+    expr => #-1 Expr;
+  }
+
+  /// The operator token before the operand: `-`, `!` or `*`.
+  pub fn op_token(&self) -> Option<Red> {
+    child_tokens(&self.red).next()
+  }
+}
 
 impl RefExpr {
   define_getter! {
@@ -172,7 +198,16 @@ impl RefExpr {
   }
 }
 
-// impl PostfixExpr {}
+impl PostfixExpr {
+  define_getter! {
+    expr => #0 Expr;
+  }
+
+  /// The `*` after the dot.
+  pub fn op_token(&self) -> Option<Red> {
+    child_tokens(&self.red).next_back()
+  }
+}
 
 impl CastExpr {
   define_getter! {
@@ -189,6 +224,15 @@ define_nodes! {
 impl ArgList {
   define_getter! {
     args => #0 Expr;
+  }
+
+  /// The argument fields, for both `f(..)` and `f{..}` calls.
+  pub fn fields(&self) -> Vec<ExprField> {
+    match self.args() {
+      Some(Expr::Tuple(tuple)) => tuple.fields(),
+      Some(Expr::Record(record)) => record.fields(),
+      _ => Vec::new(),
+    }
   }
 }
 
@@ -236,7 +280,12 @@ impl ContinueExpr {
   }
 }
 
-// impl ClosureExpr {}
+impl ClosureExpr {
+  define_getter! {
+    pat => #0 Pattern;
+    body => #-1 Expr;
+  }
+}
 
 impl FieldExpr {
   define_getter! {
@@ -245,7 +294,13 @@ impl FieldExpr {
   }
 }
 
-// impl MethodCallExpr {}
+impl MethodCallExpr {
+  define_getter! {
+    receiver => #0 Expr;
+    name => #1 Name;
+    args => #-1 ArgList;
+  }
+}
 
 impl LabeledExpr {
   define_getter! {
@@ -254,6 +309,15 @@ impl LabeledExpr {
   }
 }
 
-// impl ChainExpr {}
+impl ChainExpr {
+  define_getter! {
+    operands => [Expr];
+  }
+
+  /// The operator tokens between the operands.
+  pub fn op_tokens(&self) -> Vec<Red> {
+    child_tokens(&self.red).collect()
+  }
+}
 
 // impl ErrorExpr {}

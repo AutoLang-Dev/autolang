@@ -4,6 +4,7 @@ use crate::Green;
 use crate::Red;
 use crate::SyntaxKind;
 use crate::SyntaxKind::*;
+use crate::frag;
 use crate::make::Frag;
 
 /// A red node for `kind` with the children its AST type needs to cast.
@@ -12,6 +13,8 @@ pub(super) fn probe_red(kind: SyntaxKind) -> Red {
     // These enums dispatch on a token inside the node.
     TypeKind => Frag::node(kind, [Frag::kind_token(KwType)]).red(),
     Visibility => Frag::node(kind, [Frag::kind_token(KwPub)]).red(),
+    // `AttrArg` only carries meaning with a value node inside it.
+    AttrArg => frag! { AttrArg { LiteralExpr { Int("1") } } }.red(),
     _ => Red::new_root(Green::node(kind, [])),
   }
 }

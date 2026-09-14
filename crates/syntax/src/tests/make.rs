@@ -281,3 +281,30 @@ fn make_agrees_with_the_parser_on_a_call() {
     }),
   );
 }
+
+#[test]
+fn make_agrees_with_the_parser_on_a_using_item() {
+  assert_matches_parser(
+    "using foo::{bar, baz as qux};",
+    file([frag! {
+      UsingItem {
+        KwUsing
+        UsingUnitName { Name { Ident("foo") } }
+        ColonColon
+        UsingTree {
+          UsingTreeList {
+            OpenBrace
+            UsingTree { Name { Ident("bar") } }
+            Comma
+            UsingTree {
+              Name { Ident("baz") }
+              Rename { KwAs Name { Ident("qux") } }
+            }
+            CloseBrace
+          }
+        }
+        Semi
+      }
+    }]),
+  );
+}

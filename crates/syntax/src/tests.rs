@@ -1,6 +1,7 @@
 mod accessors;
 mod kinds;
 mod make;
+mod paths;
 mod positions;
 mod probe;
 mod recovery;
