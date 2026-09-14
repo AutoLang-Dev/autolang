@@ -93,56 +93,56 @@ fn type_item_body(p: &mut Parser) {
 
 fn using_item_body(p: &mut Parser) {
   p.expect(T![using]);
+  using_unit_name(p);
+  p.expect(T![::]);
   using_tree(p);
+}
+
+fn using_unit_name(p: &mut Parser) -> CompletedMarker {
+  let m = p.start();
+
+  match p.current() {
+    Ident => {
+      name(p);
+    }
+    T![unit] => {
+      p.bump(T![unit]);
+    }
+    _ => {
+      p.expect(Ident);
+    }
+  }
+
+  p.complete(m, UsingUnitName)
 }
 
 pub fn using_tree(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
 
   match p.current() {
-    T![_] => p.bump(T![_]),
+    Ident => {
+      name(p);
+      if p.bump_if(T![::]) {
+        using_tree(p);
+      } else if p.at(T![as]) {
+        rename(p);
+      }
+    }
+    T![_] => {
+      p.bump(T![_]);
+    }
+    T!['{'] => {
+      using_tree_list(p);
+    }
     T![*] => {
       p.error(Error::Expected {
         expected: T![_],
         actual: T![*],
       });
-      p.bump_any();
-    }
-    T!['{'] => {
-      using_tree_list(p);
-    }
-    Ident | T![self] | T![super] | T![unit] | T![:] => {
-      if nth_at_single_colon(p, 0) {
-        p.error(Error::Expected {
-          expected: T![::],
-          actual: T![:],
-        });
-        p.bump_any();
-      }
-
-      paths::path_allow_trailing_colon_colon(p);
-
-      match p.current() {
-        T!['{'] => {
-          using_tree_list(p);
-        }
-        T![_] => p.bump(T![_]),
-        T![*] => {
-          p.error(Error::Expected {
-            expected: T![_],
-            actual: T![*],
-          });
-          p.bump_any();
-        }
-        _ => (),
-      }
-
-      if p.at(T![as]) {
-        rename(p);
-      }
+      p.bump(T![*]);
     }
     _ => {
-      name(p);
+      p.expect(Ident);
     }
   }
 
@@ -167,12 +167,7 @@ pub fn using_tree_list(p: &mut Parser) -> CompletedMarker {
 fn rename(p: &mut Parser) -> CompletedMarker {
   let m = p.start();
   p.expect(T![as]);
-  // `as _` introduces the item without binding a name to it.
-  if p.at(T![_]) {
-    p.bump(T![_]);
-  } else {
-    name(p);
-  }
+  name(p);
   p.complete(m, Rename)
 }
 

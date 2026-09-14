@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests/grammar.rs
-description: "using foo::*; using bar;"
+description: "using foo::bar::*; using unit::bar;"
 expression: parse(input)
 ---
 Output {
@@ -9,29 +9,33 @@ Output {
         Enter(ModuleInner),
         Enter(UsingItem),
         KwUsing(1),
-        Enter(UsingTree),
-        Enter(Path),
-        Enter(PathSegment),
+        Enter(UsingUnitName),
         Enter(Name),
         Ident(1),
         Exit,
         Exit,
         ColonColon(2),
+        Enter(UsingTree),
+        Enter(Name),
+        Ident(1),
         Exit,
+        ColonColon(2),
+        Enter(UsingTree),
         Error(0),
         Star(1),
+        Exit,
         Exit,
         Semi(1),
         Exit,
         Enter(UsingItem),
         KwUsing(1),
+        Enter(UsingUnitName),
+        KwUnit(1),
+        Exit,
+        ColonColon(2),
         Enter(UsingTree),
-        Enter(Path),
-        Enter(PathSegment),
         Enter(Name),
         Ident(1),
-        Exit,
-        Exit,
         Exit,
         Exit,
         Semi(1),

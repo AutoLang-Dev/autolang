@@ -43,7 +43,9 @@ fn underscore_mod_decl_is_rejected() {
 fn names_are_wrapped_in_name_nodes() {
   // Item names, binding names, field names, path segments and rename targets
   // are all `Name(Ident)`; `as _` and `foo::_` keep a bare `Underscore`.
-  parse_snap!(r#"using foo as _; using bar::{baz as _, qux}; a: type = self::unit;"#);
+  parse_snap!(
+    r#"using unit::foo as bar; using unit::bar::{baz as qux, quux}; a: type = self::unit;"#
+  );
 }
 
 #[test]
@@ -302,7 +304,7 @@ fn inner_attrs_and_attr_args() {
 #[test]
 fn using_items() {
   parse_snap!(
-    r#"using foo; using foo::bar as baz; using foo::_; using foo::{bar, baz as qux, nested::{one, two}}; #[prelude] pub using ::root::prelude;"#
+    r#"using unit::foo; using foo::bar as baz; using foo::bar::_; using foo::bar::{baz, qux as quux, nested::{one, two}}; #[prelude] pub using unit::root::prelude;"#
   );
 }
 
@@ -323,7 +325,7 @@ fn invalid_inner_attr_recovery() {
 
 #[test]
 fn invalid_using_glob_recovery() {
-  parse_snap!(r#"using foo::*; using bar;"#);
+  parse_snap!(r#"using foo::bar::*; using unit::bar;"#);
 }
 
 #[test]

@@ -209,6 +209,7 @@ pub enum SyntaxKind {
   PathSegment,
   UsingTree,
   UsingTreeList,
+  UsingUnitName,
   Rename,
 
   // Token trees.
